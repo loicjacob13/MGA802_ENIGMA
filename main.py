@@ -1,5 +1,54 @@
 import string
 
+def normaliser(texte):
+    """Renvoie une lettre sans accent par l'intermédiaire d'un dictionnaire"""
+    accents = {
+        'à': 'a', 'â': 'a', 'á': 'a', 'ä': 'a',
+        'è': 'e', 'ê': 'e', 'é': 'e', 'ë': 'e',
+        'î': 'i', 'ï': 'i', 'í': 'i', 'ì': 'i',
+        'ô': 'o', 'ó': 'o', 'ö': 'o', 'ò': 'o',
+        'û': 'u', 'ú': 'u', 'ü': 'u', 'ù': 'u',
+        'ç': 'c', 'ñ': 'n',
+    }
+    resultat =""
+    for lettre in texte.lower():
+        if lettre in accents:
+            resultat += accents[lettre]
+        else:
+            resultat += lettre
+    return resultat
+
+def lire_texte(fichier_a_lire):
+    while True:
+        print("Voulez-vous écrire votre texte ou ouvrir un fichier ?")
+        print("1- Écrire votre texte")
+        print("2- Ouvrir un fichier")
+
+        try:
+            choix = int(input("1 ou 2 ? ").strip())
+        except ValueError:  #Si l'utilisateur tape "a" au lieu de 1 ou 2
+            print("Erreur : entrez uniquement 1 ou 2.\n")
+            continue  #On recommence la boucle
+
+        if choix == 1:
+            texte_original = input("Écrivez votre texte ici : ")
+            return normaliser(texte_original)
+
+        elif choix == 2: #On boucle jusqu'à ce que le fichier existe
+            while True:
+                chemin = input("Nom du fichier ? ").strip()
+                try:
+                    with open(chemin, "r", encoding="utf-8") as fichier:
+                        contenu = fichier.read()
+                        return normaliser(contenu)
+                except FileNotFoundError:  #Si le fichier n'existe pas
+                    print(f"Erreur : le fichier '{chemin}' est introuvable, réessayez.\n")
+                except PermissionError:  #Si l'accès au fichier n'est pas autorisé
+                    print(f"Erreur : accès refusé au fichier '{chemin}'.\n")
+
+        else:
+            print("Erreur : entrez uniquement 1 ou 2.\n")  # si l'utilisateur tape 5 par exemple
+
 alphabet = string.ascii_lowercase
 liste_chiffres= list(range(10))
 texte_original = "abc ab"
