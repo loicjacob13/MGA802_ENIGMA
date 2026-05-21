@@ -61,11 +61,11 @@ def chiffrer(texte_original, cle):
     for i in range(len(texte_original)):
         if texte_original[i] in alphabet:
             liste_index_original[i] = alphabet.find(texte_original[i]) #aprés le for, on aura notre liste d'index
-            liste_index_chiffree[i] = (liste_index_original[i] + cle) % 25
+            liste_index_chiffree[i] = (liste_index_original[i] + cle) % 26
             texte_chiffree[i] = alphabet[liste_index_chiffree[i]]
         elif texte_original[i] in liste_chiffres:
             texte_chiffree[i] = liste_chiffres[liste_index_chiffree[i]]
-    print(texte_chiffree)
+    return texte_chiffree
 
     '''#on sort de la boucle, et donc on va mtn utiliser la clé
     for i in range(len(texte_original)):
@@ -87,14 +87,7 @@ def dechiffrer(texte_chiffree, cle):
             liste_index_chiffree[i] = alphabet.find(texte_chiffree[i]) #aprés le for, on aura notre liste d'index
             liste_index_original[i] = (liste_index_chiffree[i] - cle) % 26
             texte_original[i] = alphabet[liste_index_original[i]]
-    print(texte_original)
-
-texte_chiffree = "bcd bc"
-chiffrer(texte_original, cle)
-dechiffrer(texte_chiffree, cle)
-
-def enigma_chiffrer(texte_original,cle):
-    cle=[input("saisis ta première clé: "),input("saisis ta deuxième clé: "),input("saisis ta troisème clé: ")]
+    return texte_original
 
 def enigma_chiffrer(texte_original):
     cle = [int(input("saisis ta première clé: ")), int(input("saisis ta deuxième clé: ")),int( input("saisis ta troisème clé: "))]
@@ -117,6 +110,24 @@ def enigma_chiffrer(texte_original):
             liste_index_chiffree[i] = (liste_index_original[i] + (cle[j%3])) % 26
             texte_chiffree[i] = alphabet[liste_index_chiffree[i]]
             j=j+1
-    print(texte_chiffree)
+    return texte_chiffree
 
-enigma_chiffrer(texte_original)
+if __name__ == "__main__":
+    #Lecture du texte
+    resultat = lire_texte(None)
+    print(f"\ntexte:{resultat}")
+
+    #Demande de la clé
+    while True:
+        try:
+            cle=int(input("saisis de la cle: ").strip())
+            break
+        except ValueError:
+            print("Erreur : saisissez une clé entière.")
+
+     #Chiffrement
+    texte_chiffre = chiffrer(resultat, cle)
+    print(f"\ntexte encrypté:{texte_chiffre})")
+
+    texte_original = dechiffrer(texte_chiffre, cle)
+    print(f"\ntexte décrypté:{texte_original})")
