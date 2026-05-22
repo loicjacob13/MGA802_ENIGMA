@@ -1,5 +1,10 @@
 import string
 
+#CONSTANTES
+
+alphabet = string.ascii_lowercase
+liste_chiffres= list(range(10))
+
 def normaliser(texte):
     """Renvoie une lettre sans accent par l'intermédiaire d'un dictionnaire"""
     accents = {
@@ -11,9 +16,11 @@ def normaliser(texte):
         'ç': 'c', 'ñ': 'n',
     }
     resultat =""
-    for lettre in texte.lower():
-        if lettre in accents:
-            resultat += accents[lettre]
+    for lettre in texte:
+        minuscule = lettre.lower()
+        if minuscule in accents:
+            sans_accent = accents[minuscule]
+            resultat += sans_accent.upper() if lettre.isupper() else sans_accent
         else:
             resultat += lettre
     return resultat
@@ -36,7 +43,7 @@ def lire_texte(fichier_a_lire):
 
         elif choix == 2: #On boucle jusqu'à ce que le fichier existe
             while True:
-                chemin = input("Nom du fichier ? ").strip()
+                chemin = input("Nom du fichier ? ").strip().strip('"')
                 try:
                     with open(chemin, "r", encoding="utf-8") as fichier:
                         contenu = fichier.read()
@@ -49,45 +56,34 @@ def lire_texte(fichier_a_lire):
         else:
             print("Erreur : entrez uniquement 1 ou 2.\n")  # si l'utilisateur tape 5 par exemple
 
-alphabet = string.ascii_lowercase
-liste_chiffres= list(range(10))
-texte_original = "abc ab"
-cle = 1
 
 def chiffrer(texte_original, cle):
     texte_chiffree = [" "] * len(texte_original)
-    liste_index_original = [" "] * len(texte_original)
-    liste_index_chiffree = [" "] * len(texte_original)
+    liste_index_original = [0] * len(texte_original)
+    liste_index_chiffree = [0] * len(texte_original)
     for i in range(len(texte_original)):
-        if texte_original[i] in alphabet:
-            liste_index_original[i] = alphabet.find(texte_original[i]) #aprés le for, on aura notre liste d'index
+        if texte_original[i].lower() in alphabet:
+            liste_index_original[i] = alphabet.find(texte_original[i].lower()) #aprés le for, on aura notre liste d'index
             liste_index_chiffree[i] = (liste_index_original[i] + cle) % 26
-            texte_chiffree[i] = alphabet[liste_index_chiffree[i]]
-        elif texte_original[i] in liste_chiffres:
-            texte_chiffree[i] = liste_chiffres[liste_index_chiffree[i]]
-    return texte_chiffree
-
-    '''#on sort de la boucle, et donc on va mtn utiliser la clé
-    for i in range(len(texte_original)):
-        if liste_index_original[i] in liste_chiffres:
-            liste_index_chiffree[i]=liste_index_original[i]+cle%26
-    print(liste_index_chiffree)
-    #on sort de cette boucle et mtn on remplit la liste du mot
-    for i in range(len(liste_index_chiffree)):
-        if texte_original[i] in alphabet:
-            texte_chiffree[i]=alphabet[liste_index_chiffree[i]]
-    print(texte_chiffree)'''
+            nouvelle_lettre = alphabet[liste_index_chiffree[i]]
+            texte_chiffree[i] = nouvelle_lettre.upper() if texte_original[i].isupper() else nouvelle_lettre
+        else:
+            texte_chiffree[i] = texte_original[i]
+    return "".join(texte_chiffree)
 
 def dechiffrer(texte_chiffree, cle):
     texte_original = [" "] * len(texte_chiffree)
-    liste_index_original = [" "] * len(texte_original) #variables de transition # pas nécessaire
-    liste_index_chiffree = [" "] * len(texte_original)
+    liste_index_original = [0] * len(texte_original) #variables de transition # pas nécessaire
+    liste_index_chiffree = [0] * len(texte_original)
     for i in range(len(texte_original)):
-        if texte_chiffree[i] in alphabet:
-            liste_index_chiffree[i] = alphabet.find(texte_chiffree[i]) #aprés le for, on aura notre liste d'index
+        if texte_chiffree[i].lower() in alphabet:
+            liste_index_chiffree[i] = alphabet.find(texte_chiffree[i].lower()) #aprés le for, on aura notre liste d'index
             liste_index_original[i] = (liste_index_chiffree[i] - cle) % 26
-            texte_original[i] = alphabet[liste_index_original[i]]
-    return texte_original
+            nouvelle_lettre = alphabet[liste_index_original[i]]
+            texte_original[i] = nouvelle_lettre.upper() if texte_chiffree[i].isupper() else nouvelle_lettre
+        else:
+            texte_original[i] = texte_chiffree[i]
+    return "".join(texte_original)
 
 def enigma_chiffrer(texte_original):
     cle = [int(input("saisis ta première clé: ")), int(input("saisis ta deuxième clé: ")),int( input("saisis ta troisème clé: "))]
@@ -97,37 +93,86 @@ def enigma_chiffrer(texte_original):
     for k in range(len(cle)): #on vérifie l'input afin de ne pas mettre d'input qui ne marcherait pas
         while cle[k] not in liste_chiffres:
             print("\n")
-            print("attention, veilles bien à mettre un nombre entier compris entre 0 et 9")
+            print("Attention, veille bien à mettre un nombre entier compris entre 0 et 9")
             cle[k] = int(input(f"saisis à nouveau ta clé numéro {k + 1}: "))
 
     texte_chiffree = [" "] * len(texte_original)
-    liste_index_original = [" "] * len(texte_original)
-    liste_index_chiffree = [" "] * len(texte_original)
+    liste_index_original = [0] * len(texte_original)
+    liste_index_chiffree = [0] * len(texte_original)
     j=0
     for i in range(len(texte_original)):
-        if texte_original[i] in alphabet:
-            liste_index_original[i] = alphabet.find(texte_original[i]) #aprés le for, on aura notre liste d'index
+        if texte_original[i].lower() in alphabet:
+            liste_index_original[i] = alphabet.find(texte_original[i].lower()) #aprés le for, on aura notre liste d'index
             liste_index_chiffree[i] = (liste_index_original[i] + (cle[j%3])) % 26
-            texte_chiffree[i] = alphabet[liste_index_chiffree[i]]
+            nouvelle_lettre = alphabet[liste_index_chiffree[i]]
+            texte_chiffree[i] = nouvelle_lettre.upper() if texte_original[i].isupper() else nouvelle_lettre
             j=j+1
-    return texte_chiffree
+        else:
+            texte_chiffree[i] = texte_original[i]
+    return "".join(texte_chiffree),cle
+
+def enigma_dechiffrer(texte_chiffree,cle):
+
+    # contrôle : on vérifie que chaque clé est bien un entier compris dans liste_chiffres (0 à 9)
+    liste_chiffres = list(range(10))
+    for k in range(len(cle)): #on vérifie l'input afin de ne pas mettre d'input qui ne marcherait pas
+        while cle[k] not in liste_chiffres:
+            print("\n")
+            print("Attention, veille bien à mettre un nombre entier compris entre 0 et 9")
+            cle[k] = int(input(f"saisis à nouveau ta clé numéro {k + 1}: "))
+
+    texte_original = [" "] * len(texte_chiffree)
+    liste_index_original = [0] * len(texte_chiffree)
+    liste_index_chiffree = [0] * len(texte_chiffree)
+    j=0
+    for i in range(len(texte_chiffree)):
+        if texte_chiffree[i].lower() in alphabet:
+            liste_index_chiffree[i] = alphabet.find(texte_chiffree[i].lower()) #aprés le for, on aura notre liste d'index
+            liste_index_original[i] = (liste_index_chiffree[i] - (cle[j%3])) % 26
+            nouvelle_lettre = alphabet[liste_index_original[i]]
+            texte_original[i] = nouvelle_lettre.upper() if texte_chiffree[i].isupper() else nouvelle_lettre
+            j=j+1
+        else:
+            texte_original[i] = texte_chiffree[i]
+    return "".join(texte_original)
+
 
 if __name__ == "__main__":
     #Lecture du texte
     resultat = lire_texte(None)
     print(f"\ntexte:{resultat}")
 
-    #Demande de la clé
+    #Demande du mode
     while True:
+        print("Quel mode de chiffrement voulez-vous utiliser ?")
+        print("1- César (une seule clé)")
+        print("2- Enigma (un triplet de clés)")
         try:
-            cle=int(input("saisis de la cle: ").strip())
-            break
+            mode = int(input("1 ou 2 ?").strip())
+            if mode in [1,2]:
+                break
+            else:
+                 print("Erreur : entrez uniquement 1 ou 2.")
         except ValueError:
-            print("Erreur : saisissez une clé entière.")
+            print("Erreur : entrez uniquement 1 ou 2.")
 
-     #Chiffrement
-    texte_chiffre = chiffrer(resultat, cle)
-    print(f"\ntexte encrypté:{texte_chiffre})")
-
-    texte_original = dechiffrer(texte_chiffre, cle)
-    print(f"\ntexte décrypté:{texte_original})")
+    if mode == 1:
+        while True:
+            try:
+                cle=int(input("saisis de la cle: ").strip())
+                break
+            except ValueError:
+                print("Erreur : saisissez une clé entière.")
+        #Chiffrement Cesar
+        texte_chiffree = chiffrer(resultat, cle)
+        print(f"\ntexte encrypté:{texte_chiffree}")
+        #Dechiffrement Cesar
+        texte_original = dechiffrer(texte_chiffree, cle)
+        print(f"\ntexte décrypté:{texte_original}")
+    elif mode == 2:
+        #Dechiffrement Enigma_Cesar
+         texte_chiffree, cle = enigma_chiffrer(resultat)
+         print(f"\ntexte encrypté:{texte_chiffree}")
+        #Dechiffrement Enigma_Cesar
+         texte_original = enigma_dechiffrer(texte_chiffree, cle)
+         print(f"\ntexte décrypté:{texte_original}")
