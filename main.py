@@ -90,8 +90,8 @@ def dechiffrer(texte_chiffree, cle):
     print(texte_original)
 
 texte_chiffree = "bcd bc"
-chiffrer(texte_original, cle)
-dechiffrer(texte_chiffree, cle)
+#chiffrer(texte_original, cle)
+#dechiffrer(texte_chiffree, cle)
 
 def enigma_chiffrer(texte_original,cle):
     cle=[input("saisis ta première clé: "),input("saisis ta deuxième clé: "),input("saisis ta troisème clé: ")]
@@ -119,4 +119,63 @@ def enigma_chiffrer(texte_original):
             j=j+1
     print(texte_chiffree)
 
-enigma_chiffrer(texte_original)
+#enigma_chiffrer(texte_original)
+
+
+#on rechange d'idée, je vais importer des bi-grammes le splus communément utilisées dans la la langue fr
+#
+def charger_bigrammes(nombre_de_bigramme):
+    liste_bigrammes=[] #liste vide qui stockera nos bigrammes
+    nom_fichier="french_bigrams.txt"
+    with open (nom_fichier,"r", encoding="utf-8") as fichier:
+        for i in range (nombre_de_bigramme+1):
+            liste_bigrammes.append(((fichier.readline()).split()[0]).lower()) #ici l'ajout de [0] permet de prendfe suelement le premier bout
+    #return liste_bigrammes
+    print(liste_bigrammes)
+
+charger_bigrammes(300)
+
+def charger_bigrammes_rares():
+    liste_bigrammes_rare=["qz","qx","qy","jx","wx","zx","qw","hx","vz","jq","qk","qh","qn","qg","qv","qb","qj","jz","jw","jv","jf","jg","wq","wz","wv","kx","kz","fz","fx","xz"]
+    return liste_bigrammes_rare
+
+
+#on va essyaer de faire un pseudo-code pour la fonction brut force
+#on va essayer
+#on va faire une fonction qui va découper le texte avce espaces en une liste qui contient chaque mots sans espaces.
+
+def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
+    score=0 #initialisation du score
+    #on va créer une liste qui stocke chaque mot du texte,
+    liste_mots="" #liste vide au départ
+    #NOS LISTE BIGRAMME EST EN MINUSCULE et sans accent, donc on normalise
+    texte_teste=normaliser(texte_teste)
+    for caractere in texte_teste + " ": #on parcourt tous les caracteres du texte un par un
+        #l'ajout de " " sert à ajouter un espace à la fin du dernier mot du texte pour qu'il soit ajouté comme un mot
+        if caractere in alphabet: #si le caractere apparait ds l'alphabet alors ça siginfiera qu'il faut ce caractère comme constituant d'un mot
+            mot=mot+caractere #ainsi on va remplir ce mot par ce caractère
+        else:
+            #ce else caracterise la fin du mot car on rencontre soit un chiffre, soit un espace, soit un caractere alpha numerique
+            if len(mot)>=2: #ce if est pour ne pas prendre en compte les mot à 1 carctere pour le score
+                for i in range(len(mot)-1): #ici on met le -1 pour que l'indce i+1 du mot existe bien
+                    paire=mot[i]+mot[i+1]
+                    if paire in liste_bigramme:
+                        score=score+1
+                    elif paire in liste_bigrammes_rares:
+                        score=score-1
+            mot="" #on repart de 0 pour le prochain mot
+
+def brute_force_cesar(texte_chiffre,liste_bigramme,liste_bigrammes_rares):
+    #bete et mechant, on va tester les differentes cles et identifier laquelle est la meilleure selon le score
+    meileur_cle=0
+    meilleur_score=-5
+    meilleur_texte=""
+    for cle in range(26): #26 lettres de l'alphabet
+        texte_teste=dechiffrer(texte_chiffree,cle)
+        score=scorer(texte_teste, liste_bigramme, liste_bigrammes_rares)
+        if score>meilleur_score:
+            meilleur_cle=cle
+            meilleur_score=score
+            meilleur_texte=texte_teste
+    return meilleur_texte, meilleur_cle
+
