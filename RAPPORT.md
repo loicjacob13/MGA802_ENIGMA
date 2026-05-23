@@ -27,9 +27,9 @@ Le code source est centralisé de manière logique afin de faciliter la double e
 
 ### 2.1 Flux Logique et Validation des Entrées
 Le point d'entrée principal (`if __name__ == "__main__":`) analyse l'environnement d'exécution :
-* **Interface CLI (`argparse`)** : Si des arguments sont détectés sur la ligne de commande, le module `argparse` prend le relais. Il valide le type des arguments, découpe la chaîne de clé Enigma (ex: `"7-16-9"`) en un tuple de trois entiers et appelle directement la fonction correspondante.
-* **Interface Interactive** : En l'absence d'arguments, une boucle interactive `while True` s'exécute. L'utilisateur choisit le mode d'entrée de son texte. Pour éviter les plantages applicatifs, les saisies de clés numériques sont encapsulées dans des structures `try-except ValueError`. Si l'utilisateur entre une valeur aberrante ou du texte à la place d'un entier, l'erreur est interceptée et le programme l'invite à corriger sa saisie sans s'arrêter brusquement.
-
+* **Interface CLI (`argparse`)** : Si des arguments sont détectés sur la ligne de commande, le module `argparse` prend le relais. Il valide le type des arguments, découpe la chaîne de clé Enigma (ex: `"7-16-9"`) en un tuple de trois entiers et appelle directement ive** : En l'absence d'arguments, une boucle interactive `while True` s'exécute. L'utilisateur choisit le mode d'entrée de son texte. Pour éviter les plantages applicatifs, les saisies de clés numériques sont encapsulées dans des structures `try-except ValueError`. Si l'utilisateur entre une valeur aberrante ou du texte à la place d'un entier, l'erreur est interceptée et le programme l'invite à corriger sa saisie sans s'arrêter brusquement.
+la fonction correspondante.
+* **Interface Interact
 ### 2.2 Modularité des Fonctions Principales
 Le script repose sur des fonctions à responsabilité unique :
 * `normaliser(texte)` : Remplace les caractères accentués par leurs équivalents ASCII de base à l'aide d'un dictionnaire d'accents optimisé, garantissant que le chiffrement ultérieur s'applique sur un alphabet standard à 26 lettres.
