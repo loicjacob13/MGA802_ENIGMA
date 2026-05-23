@@ -88,7 +88,7 @@ def dechiffrer(texte_chiffree, cle):
 
 
 def enigma_chiffrer(texte_original):
-    cle = [int(input("saisis ta première clé: ")), int(input("saisis ta deuxième clé: ")),int( input("saisis ta troisème clé: "))]
+    cle = [int(input("saisis ta première clé: ")), int(input("saisis ta deuxième clé: ")),int( input("saisis ta troisième clé: "))]
 
     # contrôle : on vérifie que chaque clé est bien un entier compris dans liste_chiffres (0 à 9)
     liste_chiffres = list(range(10))
