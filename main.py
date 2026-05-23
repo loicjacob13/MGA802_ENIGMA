@@ -2,7 +2,7 @@ import string
 
 #CONSTANTES
 
-alphabet = string.ascii_lowercase
+alphabet = string.ascii_lowercase #renvoie l'alphabet
 liste_chiffres= list(range(10))
 
 def normaliser(texte):
@@ -136,7 +136,7 @@ def enigma_dechiffrer(texte_chiffree,cle):
             texte_original[i] = nouvelle_lettre.upper() if texte_chiffree[i].isupper() else nouvelle_lettre
             j=j+1
         else:
-            texte_original[i] = texte_chiffree[i]
+            texte_original[i] =texte_chiffree[i]
     return "".join(texte_original)
 
 
