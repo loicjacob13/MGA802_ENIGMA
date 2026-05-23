@@ -86,16 +86,7 @@ Pour l'attaque Enigma, l'utilisation de trois boucles imbriquées induit une com
 
 La collaboration au sein de notre groupe de trois auteurs a suivi une charte stricte afin de respecter la consigne académique essentielle : *Le développeur d'une fonctionnalité ne doit pas en être le testeur unitaire*.
 
-### 5.1 Matrice de Rotation des Rôles
-Pour garantir une objectivité totale et maximiser la qualité de notre code, nous avons instauré la répartition croisée suivante :
-
-| Fonctionnalité / Module | Développeur Principal | Testeur Unitaire / Réviseur |
-| :--- | :--- | :--- |
-| **Chiffrements César & Enigma** | Étudiant 1 | Étudiant 3 |
-| **IHM Console, Fichiers & CLI** | Étudiant 2 | Étudiant 1 |
-| **Brute-force & Optimisations** | Étudiant 3 | Étudiant 2 |
-
-### 5.2 Flux de Travail Git (Git Flow & Pull Requests)
+### 5.1 Flux de Travail Git (Git Flow & Pull Requests)
 Le projet a été hébergé sur un dépôt public généré à partir du template  du cours. Notre workflow s'est structuré ainsi :
 1. **Branches Thématiques** : Interdiction absolue de pousser du code directement sur la branche principale `main`. Chaque tâche faisait l'objet d'une branche dédiée que chacun de nous utilisions de manière individuelle (ex: `feature/enigma-logic`, `feature/brute-force-dictionnaire`).
 2. **Revues de Code (Pull Requests)** : Avant chaque fusion vers `main`, une Pull Request (PR) était soumise sur GitHub. Le réviseur désigné analysait les modifications, vérifiait la conformité esthétique (noms de variables explicites, absence de code mort) et la présence de commentaires pertinents.
