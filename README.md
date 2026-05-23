@@ -11,6 +11,13 @@ Ce projet consiste à coder en Python un programme capable de chiffrer et de dé
 
 
 
+## Structure du code
+
+Le programme est organisé en fonctions indépendantes : 
+
+| Fonction | Rôle |
+|---|---|
+| `normaliser(texte)` | Normalise les caractères accentués |
 
 
 ## Membres de l'équipe
