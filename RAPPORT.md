@@ -46,8 +46,7 @@ Pour traiter efficacement toutes les clés entières — y compris les clés né
 Les caractères non alphabétiques (espaces, virgules, points d'exclamation, chiffres) sautent cette étape de calcul. Ils sont directement recopiés dans la chaîne finale, préservant la lisibilité syntaxique d'origine du document.
 
 ### 3.2 Chiffrement Enigma César (Rotors Cycliques)
-Le chiffrement Enigma César applique un tuple de trois clés `(k1, k2, k3)`. L'innovation algorithmique réside dans la sélection de la clé en fonction de la position absolue (index `i`) du caractère courant dans le message global. Pour y parvenir de manière propre sans indexer manuellement des compteurs complexes, nous utilisons une formule basée sur l'index de la boucle :
-$$\text{Clé active} = \text{cles}[i \pmod 3]$$
+Le chiffrement Enigma César applique un tuple de trois clés `(k1, k2, k3)`. L'innovation algorithmique réside dans la sélection de la clé en fonction de la position absolue (index `i`) du caractère courant dans le message global. Pour y parvenir de manière propre sans indexer manuellement des compteurs complexes, nous utilisons une formule basée sur l'index de la boucle.
 
 Ainsi, le premier caractère utilise `k1`, le deuxième `k2`, le troisième `k3`, le quatrième revient à `k1`, et ainsi de suite.
 
