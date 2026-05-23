@@ -114,10 +114,33 @@ def enigma_chiffrer(texte_original):
     return "".join(texte_chiffree),cle
 
 
-#enigma_chiffrer(texte_original)
+def enigma_dechiffrer(texte_chiffree,cle):
+
+    # contrôle : on vérifie que chaque clé est bien un entier compris dans liste_chiffres (0 à 9)
+    liste_chiffres = list(range(10))
+    for k in range(len(cle)): #on vérifie l'input afin de ne pas mettre d'input qui ne marcherait pas
+        while cle[k] not in liste_chiffres:
+            print("\n")
+            print("Attention, veille bien à mettre un nombre entier compris entre 0 et 9")
+            cle[k] = int(input(f"saisis à nouveau ta clé numéro {k + 1}: "))
+
+    texte_original = [" "] * len(texte_chiffree)
+    liste_index_original = [0] * len(texte_chiffree)
+    liste_index_chiffree = [0] * len(texte_chiffree)
+    j=0
+    for i in range(len(texte_chiffree)):
+        if texte_chiffree[i].lower() in alphabet:
+            liste_index_chiffree[i] = alphabet.find(texte_chiffree[i].lower()) #aprés le for, on aura notre liste d'index
+            liste_index_original[i] = (liste_index_chiffree[i] - (cle[j%3])) % 26
+            nouvelle_lettre = alphabet[liste_index_original[i]]
+            texte_original[i] = nouvelle_lettre.upper() if texte_chiffree[i].isupper() else nouvelle_lettre
+            j=j+1
+        else:
+            texte_original[i] = texte_chiffree[i]
+    return "".join(texte_original)
 
 
-#on rechange d'idée, je vais importer des bi-grammes le splus communément utilisées dans la la langue fr
+#on rechange d'idée, je vais importer des bi-grammes les plus communément utilisées dans la la langue fr
 #
 def charger_bigrammes(nombre_de_bigramme):
     liste_bigrammes=[] #liste vide qui stockera nos bigrammes
@@ -232,33 +255,6 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
         return texte_dechiffre, cle, score
     else:
         return None #pour sortir de cette boucle
-
-
-
-def enigma_dechiffrer(texte_chiffree,cle):
-
-    # contrôle : on vérifie que chaque clé est bien un entier compris dans liste_chiffres (0 à 9)
-    liste_chiffres = list(range(10))
-    for k in range(len(cle)): #on vérifie l'input afin de ne pas mettre d'input qui ne marcherait pas
-        while cle[k] not in liste_chiffres:
-            print("\n")
-            print("Attention, veille bien à mettre un nombre entier compris entre 0 et 9")
-            cle[k] = int(input(f"saisis à nouveau ta clé numéro {k + 1}: "))
-
-    texte_original = [" "] * len(texte_chiffree)
-    liste_index_original = [0] * len(texte_chiffree)
-    liste_index_chiffree = [0] * len(texte_chiffree)
-    j=0
-    for i in range(len(texte_chiffree)):
-        if texte_chiffree[i].lower() in alphabet:
-            liste_index_chiffree[i] = alphabet.find(texte_chiffree[i].lower()) #aprés le for, on aura notre liste d'index
-            liste_index_original[i] = (liste_index_chiffree[i] - (cle[j%3])) % 26
-            nouvelle_lettre = alphabet[liste_index_original[i]]
-            texte_original[i] = nouvelle_lettre.upper() if texte_chiffree[i].isupper() else nouvelle_lettre
-            j=j+1
-        else:
-            texte_original[i] = texte_chiffree[i]
-    return "".join(texte_original)
 
 
 if __name__ == "__main__":
