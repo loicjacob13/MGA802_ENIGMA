@@ -4,8 +4,8 @@ Ce fichier contient les chaînes de test officielles + quelques cas
 limites. Ajoutez vos propres tests au fur et à mesure.
 
 Pour lancer les tests :
-    pip install pytest
-    pytest -v
+    pip install pytest         #permet d'installer la bibliotèque externe pytest
+    pytest -v                 #À ENTRER DANS LE TERMINAL !!! Permet de lancer les tests
 """
 import sys
 from pathlib import Path
@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest #va nous permettre de vérifier qu'un fonction trouve bien une erreur
 
 # Permet d'importer main.py depuis le dossier parent
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent))
 from main import chiffrer, dechiffrer, enigma_chiffrer  # noqa: E402
 
 
