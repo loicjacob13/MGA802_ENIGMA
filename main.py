@@ -71,3 +71,5 @@ def enigma_chiffrer(texte_original):
     print(texte_chiffree)
 
 enigma_chiffrer(texte_original)
+
+
