@@ -10,9 +10,9 @@ Ce projet consiste à coder en Pythonn un programme capable de chiffrer et de d�
 ---
 
 ## Membres de l'équipe
-* **Auteur 1** : [Fabien] [Koch] ([KOCF83320301]) — *Algorithmes de chiffrement & Normalisation*
-* **Auteur 2** : [Loïc] [Jacob] ([JACL]) — *Gestion des Fichiers & Interface CLI (argparse)*
-* **Auteur 3** : [Guillaume] [Pissang] ([PISG89300201) — *Module Brute-force & Tests Unitaires*
+* **Auteur 1** : Fabien Koch (KOCF83320301)
+* **Auteur 2** : Loïc Jacob (JACL) 
+* **Auteur 3** : Guillaume Pissang (PISG89300201) 
 
 ---
 
