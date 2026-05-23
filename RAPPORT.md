@@ -43,9 +43,6 @@ Le script repose sur des fonctions à responsabilité unique :
 ### 3.1 Chiffrement de César et Arithmétique Modulaire
 Pour traiter efficacement toutes les clés entières — y compris les clés négatives ou les valeurs géantes supérieures à 26 (ex: `cle = 42`) —, notre algorithme s'appuie sur l'opérateur modulo (`% 26`). 
 
-L'index de la nouvelle lettre est calculé selon la formule mathématique suivante :
-$$\text{Nouvel Index} = (\text{Index Initial} + \text{Clé}) \pmod{26}$$
-
 Les caractères non alphabétiques (espaces, virgules, points d'exclamation, chiffres) sautent cette étape de calcul. Ils sont directement recopiés dans la chaîne finale, préservant la lisibilité syntaxique d'origine du document.
 
 ### 3.2 Chiffrement Enigma César (Rotors Cycliques)
