@@ -3,27 +3,27 @@
 ### Cours : MGA802 - Sujets spéciaux I en aéronautique
 ### École de Technologie Supérieure 
 
-**Membres de l'équipe (Groupe de cours / Équipe N) :**
-* **Étudiant 1** : [Nom] [Prénom] — Rôle : Conception des Algorithmes et Normalisation
-* **Étudiant 2** : [Nom] [Prénom] — Rôle : Entrées/Sorties, Gestion des Fichiers et Interface CLI
-* **Étudiant 3** : [Nom] [Prénom] — Rôle : Algorithmes de Brute-force et Analyse de Performance
+**Membres de l'équipe**
+1. Fabien Koch
+2. Loïc Jacob
+3. Guillaume Pissang
 
 ---
 
 ## 1. Introduction et Objectifs
-Ce projet pratique s'inscrit dans le cadre du cours MGA802 et vise à concevoir une application Python modulaire, robuste et documentée mettant en œuvre deux mécanismes de chiffrement : le chiffrement historique de César et une variante cyclique inspirée de la machine Enigma.
+Ce projet vise à concevoir un programme Python, en utilisant deux mécanismes de chiffrement : le chiffrement de César et le chiffrement Enigma César.
 
-Les objectifs clés assignés à notre équipe de trois auteurs étaient :
-1. Structurer un code Python propre, lisible et conforme aux standards industriels (respect de la PEP 8, typage des données, docstrings).
-2. Assurer une gestion stricte des chaînes de caractères (normalisation des accents, préservation des structures textuelles de base comme la casse, les espaces et la ponctuation).
-3. Développer un module d'attaque par force brute capable de décoder automatiquement un message chiffré sans intervention humaine.
-4. Évaluer empiriquement la performance temporelle des algorithmes face à l'accroissement de la complexité de l'espace des clés.
-5. Appliquer une méthodologie de développement collaboratif rigoureuse avec Git (utilisation de branches thématiques, de Pull Requests et revues de code croisées).
+Nos objectifs étaient les suivants :
+1. Structurer un code Python propre et lisible avec des commentaires afin qu'il soit bien compréhensible
+2. Avoir une gestion stricte des chaînes de caractères (normalisation des accents, préservation des structures textuelles de base comme les espaces et la ponctuation).
+3. Développer une fonction d'attaque par force brute, capable de décoder automatiquement un message chiffré sans intervention humaine (on ne lui donne pas la/les clé(s).
+4. Évaluer la performance temporelle des algorithmes face à l'accroissement de la complexité de l'espace des clés.
+5. Appliquer une méthodologie de développement collaboratif rigoureuse avec Git (utilisation de branches, de Pull Requests et de Merge Requests).
 
 ---
 
 ## 2. Architecture du Programme et Interfaces
-Le code source est centralisé de manière logique afin de faciliter la double exécution (Console interactive et Ligne de commande CLI) tout en restant pleinement importable par notre suite de tests unitaires.
+Le code source est centralisé de manière logique afin de faciliter la double exécution (Console interactive et Ligne de commande CLI).
 
 ### 2.1 Flux Logique et Validation des Entrées
 Le point d'entrée principal (`if __name__ == "__main__":`) analyse l'environnement d'exécution :
@@ -100,10 +100,10 @@ Pour garantir une objectivité totale et maximiser la qualité de notre code, no
 | **Brute-force & Optimisations** | Étudiant 3 | Étudiant 2 |
 
 ### 5.2 Flux de Travail Git (Git Flow & Pull Requests)
-Le projet a été hébergé sur un dépôt privé généré à partir du template officiel du cours. Notre workflow s'est structuré ainsi :
-1. **Branches Thématiques** : Interdiction absolue de pousser du code directement sur la branche principale `main`. Chaque tâche faisait l'objet d'une branche dédiée (ex: `feature/enigma-logic`, `feature/brute-force-dictionnaire`, `fix/cli-parser`).
-2. **Revues de Code (Pull Requests)** : Avant chaque fusion vers `main`, une Pull Request (PR) était soumise sur GitHub. Le réviseur désigné analysait les modifications, vérifiait la conformité esthétique PEP 8 (noms de variables explicites, absence de code mort) et la présence de commentaires pertinents.
-3. **Intégration et Validation** : Une PR ne pouvait être validée et fusionnée que si et seulement si l'ensemble de la suite de tests dans `test_cesar.py` passait au vert via la commande locale `pytest -v`.
+Le projet a été hébergé sur un dépôt public généré à partir du template  du cours. Notre workflow s'est structuré ainsi :
+1. **Branches Thématiques** : Interdiction absolue de pousser du code directement sur la branche principale `main`. Chaque tâche faisait l'objet d'une branche dédiée que chacun de nous utilisions de manière individuelle (ex: `feature/enigma-logic`, `feature/brute-force-dictionnaire`).
+2. **Revues de Code (Pull Requests)** : Avant chaque fusion vers `main`, une Pull Request (PR) était soumise sur GitHub. Le réviseur désigné analysait les modifications, vérifiait la conformité esthétique (noms de variables explicites, absence de code mort) et la présence de commentaires pertinents.
+3. **Intégration et Validation** : Une PR ne pouvait être validée et fusionnée que si et seulement si l'ensemble de la suite de tests dans `test_cesar.py` passait au vert via la commande locale `pytest -v`!
 
 ---
 
