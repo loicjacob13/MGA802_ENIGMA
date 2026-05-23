@@ -7,7 +7,7 @@ liste_chiffres= list(range(10))
 
 def normaliser(texte):
     """Renvoie une lettre sans accent par l'intermédiaire d'un dictionnaire"""
-    accents = {
+    accents = { #création du dico accents
         'à': 'a', 'â': 'a', 'á': 'a', 'ä': 'a',
         'è': 'e', 'ê': 'e', 'é': 'e', 'ë': 'e',
         'î': 'i', 'ï': 'i', 'í': 'i', 'ì': 'i',
