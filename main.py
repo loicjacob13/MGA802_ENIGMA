@@ -131,7 +131,7 @@ def charger_bigrammes(nombre_de_bigramme):
         for i in range (nombre_de_bigramme+1):
             liste_bigrammes.append(((fichier.readline()).split()[0]).lower()) #ici l'ajout de [0] permet de prendfe suelement le premier bout
     #return liste_bigrammes
-    print(liste_bigrammes)
+    return liste_bigrammes
 
 charger_bigrammes(300)
 
@@ -164,6 +164,7 @@ def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
                     elif paire in liste_bigrammes_rares:
                         score=score-1
             mot="" #on repart de 0 pour le prochain mot
+    return score
 
 def brute_force_cesar(texte_chiffre,liste_bigramme,liste_bigrammes_rares):
     #bete et mechant, on va tester les differentes cles et identifier laquelle est la meilleure selon le score
@@ -178,4 +179,64 @@ def brute_force_cesar(texte_chiffre,liste_bigramme,liste_bigrammes_rares):
             meilleur_score=score
             meilleur_texte=texte_teste
     return meilleur_texte, meilleur_cle
+
+def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
+
+    if len(texte_chiffree)>= 300:
+        #si le texte est assez long, on essaie de supposer que la lettre la plus récurrente est le "e" et on appelle directemenr la fonction score en plus
+        nombre_du_caractere_le_plus_redondant=0 #init de cette variable
+        texte_chiffree=normaliser(texte_chiffree)
+        nombre_total_lettres=0
+        compteur={} #dictionnaire des lettres, donc clé: lettre et valeur: nombre de cette lettre dans le texte
+
+        #on va d'abord compter chaque lettre de l'alphabet dans le texte
+        for caractere in texte_chiffree: #on parcourt chaque carectere du texte
+            if caractere in alphabet: #si c'est une minuscule
+                nombre_total_lettres+=1
+                if caractere in compteur:
+                    compteur[caractere]+=1 #cette lettre existe déjà comme clé du dictionnaire, donc sa valeur augmente
+                else:
+                    compteur[caractere]=1 #nouvelle clé car nouvelle lettre
+
+    else: #si jamais le texte est pas assez long
+        return None
+
+
+    if nombre_total_lettres==0:
+        print("il y a aucune lettre de l'alphabet dans ton texte, celà ne va pas fonctionner")
+        return None
+
+#mtn on va trouver quelle est la lettre qui est la plus redondante
+
+
+    lettre_la_plus_redondante=""
+    for lettre in compteur:
+        if compteur[lettre]>nombre_du_caractere_le_plus_redondant:
+            nombre_du_caractere_le_plus_redondant=compteur[lettre]
+            lettre_la_plus_redondante=lettre
+
+#mtn on va essyaer de fixer une part de présence afin de s'assurer que ça soit bien un bon critere
+
+    proportion=nombre_du_caractere_le_plus_redondant/nombre_total_lettres
+    if proportion<0.15: #en utilisant ce critère (une proportion de 15%) on s'assure que c'est vraiment redondant
+        print("la lettre la plus fréquente représente moins de 15% donc on ne peut pas utiliser l'hypothèse que cette lettre est la lettre e")
+        return None
+
+#mtn, vu que c'est supérieur à 15%, on peut supposer que c'est bien un e
+# le e est référencé par le chiffre 4 dans l'alphabet, donc on se sert de ça pour calculer la clé de e
+    index_lettre_la_plus_redondante=alphabet.find(lettre_la_plus_redondante)
+    cle=(index_lettre_la_plus_redondante-alphabet.find("e")) % 26
+
+# on a donc la bonen clé, on va appeler la fonction scorer et la fonction dechiffrer
+    texte_dechiffre=dechiffrer(texte_chiffree,cle)
+    score=scorer(texte_dechiffre,liste_bigrammes,liste_bigrammes_rares)
+
+    if score>int(0.2 * (nombre_total_lettres/2) ): #si le score est assez élévé
+        return texte_dechiffre, cle, score
+    else:
+        return None #pour sortir de cette boucle
+
+
+
+
 
