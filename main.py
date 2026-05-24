@@ -1,3 +1,15 @@
+"""
+MGA802 - Mini-Projet A
+Auteurs: Loïc Jacob, Fabien Koch, Guillaume Pissang
+
+Description:
+Programme de chiffrement et de déchiffement avec la méthode de César et de Enigma-César
+
+Objectif:
+Etre capable de chiffrer un texte, de le déchiffre avec ou sans la clé (utilisation de méthodes de brute-force)
+en utilisant l'une des deux méthodes
+"""
+
 import string
 
 #CONSTANTES
@@ -30,20 +42,21 @@ def lire_texte(fichier_a_lire):
         print("Voulez-vous écrire votre texte ou ouvrir un fichier ?")
         print("1- Écrire votre texte")
         print("2- Ouvrir un fichier")
+        print("3- Coller un texte multiligne")
 
         try:
-            choix = int(input("1 ou 2 ? ").strip())
-        except ValueError:  #Si l'utilisateur tape "a" au lieu de 1 ou 2
-            print("Erreur : entrez uniquement 1 ou 2.\n")
+            choix = int(input("1, 2 ou 3 ? ").strip())
+        except ValueError:  #Si l'utilisateur tape "a" au lieu de 1, 2 ou 3
+            print("Erreur : entrez uniquement 1, 2 ou 3.\n")
             continue  #On recommence la boucle
 
-        if choix == 1:
-            texte_original = input("Écrivez votre texte ici : ")
+        if choix == 1:        #Cas 1 pour un texte avec une seule ligne (trivial)
+            print("Écrivez votre texte ici (pas de retour à la ligne possible) : ")
             return normaliser(texte_original)
 
-        elif choix == 2: #On boucle jusqu'à ce que le fichier existe
+        elif choix == 2: #Cas 2 avec un fichier, on boucle jusqu'à ce que le fichier existe
             while True:
-                chemin = input("Nom du fichier ? ").strip().strip('"')
+                chemin = input("Nom du fichier au format .txt (il faut le path complet du fichier) ? ").strip().strip('"')
                 try:
                     with open(chemin, "r", encoding="utf-8") as fichier:
                         contenu = fichier.read()
@@ -53,8 +66,19 @@ def lire_texte(fichier_a_lire):
                 except PermissionError:  #Si l'accès au fichier n'est pas autorisé
                     print(f"Erreur : accès refusé au fichier '{chemin}'.\n")
 
+        elif choix == 3:       #Cas 3 avec le collage d'un texte multiligne
+            print("Collez votre texte, puis (obligatoire) tapez FIN sur une ligne seule pour terminer votre saisie :")
+            lignes = []    # création d'une liste qui stockera toutes les lignes de la saisie
+            while True:
+                ligne = input() #on lie une seule ligne à la fois
+                if ligne.strip() == "FIN":      #quand on tape FIN spécifiquement, on arrête la saisie
+                    break
+                lignes.append(ligne)  #sinon on continue à ajouter les lignes à la lister, donc au texte complet
+            texte_original = "\n".join(lignes)
+            return normaliser(texte_original)
+
         else:
-            print("Erreur : entrez uniquement 1 ou 2.\n")  # si l'utilisateur tape 5 par exemple
+            print("Erreur : entrez uniquement 1,2 ou 3.\n")  # si l'utilisateur tape 5 par exemple
 
 
 def chiffrer(texte_original, cle):
@@ -88,16 +112,14 @@ def dechiffrer(texte_chiffree, cle):
 
 
 def enigma_chiffrer(texte_original):
-    cle = [int(input("saisis ta première clé: ")), int(input("saisis ta deuxième clé: ")),int( input("saisis ta troisième clé: "))]
-
-    # contrôle : on vérifie que chaque clé est bien un entier compris dans liste_chiffres (0 à 9)
-    liste_chiffres = list(range(10))
-    for k in range(len(cle)): #on vérifie l'input afin de ne pas mettre d'input qui ne marcherait pas
-        while cle[k] not in liste_chiffres:
-            print("\n")
-            print("Attention, veille bien à mettre un nombre entier compris entre 0 et 9")
-            cle[k] = int(input(f"saisis à nouveau ta clé numéro {k + 1}: "))
-
+    cle = [0, 0, 0]          #on crée la liste qui contient les 3 clés
+    for k in range(len(cle)):        #on parcourt les 3 emplacements de la liste des clés
+        while True:               #ici, c'est une boucle infinie, on n'en sort que si l'utilisateur met une clé valide
+            try:
+                cle[k] = int(input(f"Saisis ta clé numéro {k+1}: ")) % 26      #on demande unbe clé à user, le int vérifie que c'est bien un entier et modulo 26 pour l'alphabet
+                break       #si pas d'erreur, on passe à la clé suivant
+            except ValueError:           #cette partie ne s'active que si l'utilisateur ne met pas un entier (ex: "abc", "3.2", blablabla...)
+                print("Ta clé n'est pas bonne, mets uniquement des nombres entiers")
     texte_chiffree = [" "] * len(texte_original)
     liste_index_original = [0] * len(texte_original)
     liste_index_chiffree = [0] * len(texte_original)
@@ -115,15 +137,14 @@ def enigma_chiffrer(texte_original):
 
 
 def enigma_dechiffrer(texte_chiffree,cle):
-
-    # contrôle : on vérifie que chaque clé est bien un entier compris dans liste_chiffres (0 à 9)
-    liste_chiffres = list(range(10))
-    for k in range(len(cle)): #on vérifie l'input afin de ne pas mettre d'input qui ne marcherait pas
-        while cle[k] not in liste_chiffres:
-            print("\n")
-            print("Attention, veille bien à mettre un nombre entier compris entre 0 et 9")
-            cle[k] = int(input(f"saisis à nouveau ta clé numéro {k + 1}: "))
-
+    cle = [0, 0, 0]          #on crée la liste qui contient les 3 clés
+    for k in range(len(cle)):        #on parcourt les 3 emplacements de la liste des clés
+        while True:               #ici, c'est une boucle infinie, on n'en sort que si l'utilisateur met une clé valide
+            try:
+                cle[k] = int(input(f"Saisis ta clé numéro {k+1}: ")) % 26      #on demande unbe clé à user, le int vérifie que c'est bien un entier et modulo 26 pour l'alphabet
+                break       #si pas d'erreur, on passe à la clé suivant
+            except ValueError:           #cette partie ne s'active que si l'utilisateur ne met pas un entier (ex: "abc", "3.2", blablabla...)
+                print("Ta clé n'est pas bonne, mets uniquement des nombres entiers")
     texte_original = [" "] * len(texte_chiffree)
     liste_index_original = [0] * len(texte_chiffree)
     liste_index_chiffree = [0] * len(texte_chiffree)
@@ -258,6 +279,22 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
 
 
 if __name__ == "__main__":
+    print("="*60)
+    print(" BIENVENUE DANS CE PROGRAMME DE CHIFFREMENT / DÉCHIFFREMENT ")
+    print("="*60)
+    print()
+    print("Ce programme va vous permettre de chiffrer ou de déchiffre un texte")
+    print("à l'aide de deux méthodes qui sont basées sur le chiffrement de César :")
+    print()
+    print(" - César classque : qui n'utilise qu'une seule clé de décalage")
+    print(" - Enigma-César : qui utilise trois clés de décalage successive")
+    print()
+    print("Le programme vous permet aussi de retrouver automatiquement la clé")
+    print("d'un texte chiffré par par l'une des deux méthodes grâce à une méthode d'analyse.")
+    print()
+    print("A vous de jouer!")
+    print()
+
     #Lecture du texte
     resultat = lire_texte(None)
     print(f"\ntexte:{resultat}")
@@ -308,8 +345,7 @@ if __name__ == "__main__":
             print(f"\ntexte décrypté :\n{texte_dechiffree} ")
         else:
             # Si la méthode du "e" n'aboutit pas, on réalise le brut force complet du texte
-            print("\nMéthode du 'e' insuffisante, brute force complet")
+            print("\nMéthode du 'e' insuffisante, utilisation du brute force complet")
             texte_dechiffree, cle = brute_force_cesar(resultat,liste_bigrammes, liste_bigrammes_rares)
-            print(f"\nCLé trouvée : {cle}")
+            print(f"\nClé trouvée ≡ {cle} [26]")
             print(f"\ntexte décrypté :\n{texte_dechiffree} ")
-
