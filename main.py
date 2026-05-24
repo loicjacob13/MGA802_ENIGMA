@@ -188,6 +188,7 @@ def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
     liste_mots="" #liste vide au départ
     mot="" #pour initialiser le mot qui sera vide au départ
     #NOS LISTE BIGRAMME EST EN MINUSCULE et sans accent, donc on normalise
+    nombre_de_bigrammes_testés=0 #nombre de paire de lettre examiné
     texte_teste=normaliser(texte_teste)
     for caractere in texte_teste + " ": #on parcourt tous les caracteres du texte un par un
         #l'ajout de " " sert à ajouter un espace à la fin du dernier mot du texte pour qu'il soit ajouté comme un mot
@@ -198,12 +199,13 @@ def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
             if len(mot)>=2: #ce if est pour ne pas prendre en compte les mot à 1 carctere pour le score
                 for i in range(len(mot)-1): #ici on met le -1 pour que l'indce i+1 du mot existe bien
                     paire=mot[i]+mot[i+1]
+                    nombre_de_bigrammes_testés+=1
                     if paire in liste_bigramme:
                         score=score+1
                     elif paire in liste_bigrammes_rares:
                         score=score-1
             mot="" #on repart de 0 pour le prochain mot
-    return score
+    return score,nombre_de_bigrammes_testés
 
 def brute_force_cesar(texte_chiffree,liste_bigramme,liste_bigrammes_rares):
     #bete et mechant, on va tester les differentes cles et identifier laquelle est la meilleure selon le score
@@ -221,27 +223,22 @@ def brute_force_cesar(texte_chiffree,liste_bigramme,liste_bigrammes_rares):
 
 def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
 
-    if len(texte_chiffree)>= 300:
-        #si le texte est assez long, on essaie de supposer que la lettre la plus récurrente est le "e" et on appelle directemenr la fonction score en plus
-        nombre_du_caractere_le_plus_redondant=0 #init de cette variable
-        texte_chiffree=normaliser(texte_chiffree)
-        nombre_total_lettres=0
-        compteur={} #dictionnaire des lettres, donc clé: lettre et valeur: nombre de cette lettre dans le texte
+#cette fonction agit comme un raccourci, donc on teste le cas "e".
+    nombre_du_caractere_le_plus_redondant=0 #init de cette variable
+    texte_chiffree=normaliser(texte_chiffree)
+    nombre_total_lettres=0
+    compteur={} #dictionnaire des lettres, donc clé: lettre et valeur: nombre de cette lettre dans le texte
 
-        #on va d'abord compter chaque lettre de l'alphabet dans le texte
-        for caractere in texte_chiffree: #on parcourt chaque carectere du texte
-            lettre_minuscule=caractere.lower() #grâce à ça on a que des minsucules
-            if lettre_minuscule in alphabet: #donc forcement minusucule alphabet est deja en minsuscule
-                nombre_total_lettres+=1
-                
-                if lettre_minuscule in compteur:
-                    compteur[lettre_minuscule]+=1 #cette lettre existe déjà comme clé du dictionnaire, donc sa valeur augmente
-                else:
-                    compteur[lettre_minuscule]=1 #nouvelle clé car nouvelle lettre
+    #on va d'abord compter chaque lettre de l'alphabet dans le texte
+    for caractere in texte_chiffree: #on parcourt chaque carectere du texte
+        lettre_minuscule=caractere.lower() #grâce à ça on a que des minsucules
+        if lettre_minuscule in alphabet: #donc forcement minusucule alphabet est deja en minsuscule
+            nombre_total_lettres+=1
 
-    else: #si jamais le texte est pas assez long
-        return None
-
+            if lettre_minuscule in compteur:
+                compteur[lettre_minuscule]+=1 #cette lettre existe déjà comme clé du dictionnaire, donc sa valeur augmente
+            else:
+                compteur[lettre_minuscule]=1 #nouvelle clé car nouvelle lettre
 
     if nombre_total_lettres==0:
         print("il y a aucune lettre de l'alphabet dans ton texte, celà ne va pas fonctionner")
@@ -276,6 +273,36 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
         return texte_dechiffre, cle, score
     else:
         return None #pour sortir de cette boucle
+
+def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
+    nombre_de_bigrammes_testes=scorer(texte_chiffree,liste_bigrammes,liste_bigrammes_rares)[1] #car on veut le deuxième return de la fonction scorer
+# ce nombre là est essentiel pour se baser sur un seuil réel
+    seuil=int(0,4*nombre_de_bigrammes_testes)
+    #notre seuil à été fixé de telle façon que si il y a 40% des bigrammes qui font partie des bigrammes les plus redondant de la langue française, cela certifie que ce sera bon
+# on va gérer le cas des textes courts
+    meilleur_cle=[0,0,0]
+    meilleur_score=-100 #de façon à que le score soit bien bas
+
+    #triple_boucle des indices
+    for premiere_cle in range(26):
+        for deuxieme_cle in range(26):
+            for troisieme_cle in range(26):
+                texte_teste=enigma_dechiffrer(texte_chiffree,[premiere_cle,deuxieme_cle,troisieme_cle])
+                score=scorer(texte_teste,liste_bigrammes,liste_bigrammes_rares)[0]
+
+                if score>meilleur_score:
+                    meilleur_score=score #pour prende en compte le meilleur score
+                    meilleur_cle=[premiere_cle,deuxieme_cle,troisieme_cle]
+                    meilleur_texte=texte_teste
+
+                if score>= seuil: #si ça rentre dedans, on arrête la boucle interminable
+                    return meilleur_texte, meilleur_cle
+
+    return meilleur_texte, meilleur_cle
+
+
+
+
 
 
 if __name__ == "__main__":
