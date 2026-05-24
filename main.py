@@ -146,7 +146,7 @@ def charger_bigrammes(nombre_de_bigramme):
     liste_bigrammes=[] #liste vide qui stockera nos bigrammes
     nom_fichier="french_bigrams.txt"
     with open (nom_fichier,"r", encoding="utf-8") as fichier:
-        for i in range (nombre_de_bigramme+1):
+        for i in range (nombre_de_bigramme):
             liste_bigrammes.append(((fichier.readline()).split()[0]).lower()) #ici l'ajout de [0] permet de prendfe suelement le premier bout
     #return liste_bigrammes
     return liste_bigrammes
@@ -267,33 +267,49 @@ if __name__ == "__main__":
         print("Quel mode de chiffrement voulez-vous utiliser ?")
         print("1- César (une seule clé)")
         print("2- Enigma (un triplet de clés)")
+        print("3- Brute force César (trouve la clé automatiquement)")
         try:
-            mode = int(input("1 ou 2 ?").strip())
-            if mode in [1,2]:
+            mode = int(input("1, 2 ou 3 ?").strip())
+            if mode in [1,2,3]:
                 break
             else:
-                 print("Erreur : entrez uniquement 1 ou 2.")
+                 print("Erreur : entrez uniquement 1, 2 ou 3.")
         except ValueError:
-            print("Erreur : entrez uniquement 1 ou 2.")
+            print("Erreur : entrez uniquement 1, 2 ou 3.")
 
     if mode == 1:
         while True:
             try:
-                cle=int(input("saisis de la cle: ").strip())
+                cle=int(input("Saisis de la cle: ").strip())
                 break
             except ValueError:
                 print("Erreur : saisissez une clé entière.")
         #Chiffrement Cesar
         texte_chiffree = chiffrer(resultat, cle)
-        print(f"\ntexte encrypté:{texte_chiffree}")
-        #Dechiffrement Cesar
-        texte_original = dechiffrer(texte_chiffree, cle)
-        print(f"\ntexte décrypté:{texte_original}")
+        print(f"\ntexte encrypté:\n{texte_chiffree}")
+
     elif mode == 2:
-        #Dechiffrement Enigma_Cesar
+        #Chiffrement Enigma_Cesar
          texte_chiffree, cle = enigma_chiffrer(resultat)
-         print(f"\ntexte encrypté:{texte_chiffree}")
-        #Dechiffrement Enigma_Cesar
-         texte_original = enigma_dechiffrer(texte_chiffree, cle)
-         print(f"\ntexte décrypté:{texte_original}")
+         print(f"\ntexte encrypté:\n{texte_chiffree}")
+
+    elif mode == 3:
+        #Chargement des bigrammes
+        liste_bigrammes = charger_bigrammes(200)
+        liste_bigrammes_rares = charger_bigrammes_rares()
+
+        #Essai avec la méthode du "e" d'abord (plus rapide)
+        resultat_e = cas_du_e(resultat,liste_bigrammes, liste_bigrammes_rares)
+
+        if resultat_e is not None:
+            texte_dechiffree, cle, score = resultat_e
+            print(f" \n Clé trouvée par méthode du 'e' : {cle}")
+            print(f"Score : {score}")
+            print(f"\ntexte décrypté :\n{texte_dechiffree} ")
+        else:
+            # Si la méthode du "e" n'aboutit pas, on réalise le brut force complet du texte
+            print("\nMéthode du 'e' insuffisante, brute force complet")
+            texte_dechiffree, cle = brute_force_cesar(resultat,liste_bigrammes, liste_bigrammes_rares)
+            print(f"\nCLé trouvée : {cle}")
+            print(f"\ntexte décrypté :\n{texte_dechiffree} ")
 
