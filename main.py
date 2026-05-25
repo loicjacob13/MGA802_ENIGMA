@@ -84,6 +84,7 @@ def lire_texte(fichier_a_lire):
 
 
 def chiffrer(texte_original, cle):
+    texte_original = normaliser(texte_original)
     texte_chiffree = [" "] * len(texte_original)
     liste_index_original = [0] * len(texte_original)
     liste_index_chiffree = [0] * len(texte_original)
