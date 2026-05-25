@@ -10,8 +10,8 @@ limites. Ajoutez vos propres tests au fur et à mesure.
 
 
 Pour lancer les tests :
-    pip install pytest      (à ne faire qu'un fois la première fois)   #permet d'installer la bibliotèque externe pytest
-    pytest -v                 #À ENTRER DANS LE TERMINAL !!! Permet de lancer les tests (le paramètre -v permet d'afficher le détail des tests
+    pip install pytest      (à ne faire qu'un fois la première fois, il faut copier cette commande dans le Terminal de PyCharm)  #permet d'installer la bibliotèque externe pytest
+    pytest -v                 #À ENTRER DANS LE TERMINAL une fois l'installation de pytest faite !!! Permet de lancer les tests (le paramètre -v permet d'afficher le détail des tests
 
 Le principe est le suivant:
 Python va executer les tests, et nous dire si oui (PASSED) ou non (FAILED) les tests sont validés
