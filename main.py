@@ -115,6 +115,7 @@ def dechiffrer(texte_chiffree, cle):
 
 
 def enigma_chiffrer(texte_original):
+    texte_original = normaliser(texte_original) #On normalise le texte en entrée
     cle = [0, 0, 0]          #on crée la liste qui contient les 3 clés
     for k in range(len(cle)):        #on parcourt les 3 emplacements de la liste des clés
         while True:               #ici, c'est une boucle infinie, on n'en sort que si l'utilisateur met une clé valide
