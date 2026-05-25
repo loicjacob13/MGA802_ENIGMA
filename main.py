@@ -138,12 +138,11 @@ def enigma_chiffrer(texte_original):
             texte_chiffree[i] = texte_original[i]
     return "".join(texte_chiffree),cle
 
-def definir_seuil(nom_fichier,liste_bigramme,liste_bigrammes_rares,ligne_debut=32,ligne_fin=18153):
-#les id du début et fin permettent de bien prendre en compte uniquement du texte et non des commentaires en anglais
+def definir_seuil(nom_fichier,liste_bigrammes,liste_bigrammes_rares):
     with open(nom_fichier, "r",encoding="utf-8") as fichier:
         lignes=fichier.readlines()
-    texte_reference="".join(lignes[ligne_debut:ligne_fin])
-    score,nombre_de_bigrammes_testes,proportion=scorer(texte_reference,liste_bigramme,liste_bigrammes_rares)
+    texte_reference="".join(lignes)
+    score,nombre_de_bigrammes_testes,proportion=scorer(texte_reference,liste_bigrammes,liste_bigrammes_rares)
     return score, nombre_de_bigrammes_testes, proportion
 
 def enigma_dechiffrer(texte_chiffree,cle):
@@ -296,11 +295,12 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
     else:
         return None #pour sortir de cette boucle
 
+
+
 def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
-    nombre_de_bigrammes_testes=scorer(texte_chiffree,liste_bigrammes,liste_bigrammes_rares)[1] #car on veut le deuxième return de la fonction scorer
-# ce nombre là est essentiel pour se baser sur un seuil réel
-    seuil=int(0.9*nombre_de_bigrammes_testes)
-    #notre seuil a été fixé de telle façon que s'il y a 90% des bigrammes qui font partie des bigrammes les plus redondant de la langue française, cela certifie que ce sera bon
+
+    seuil_ideal=definir_seuil("Les_Miserables.txt",liste_bigrammes,liste_bigrammes_rares)[2]
+#le seuil ideal correspond à la proportion ideale
 # on va gérer le cas des textes courts
     meilleur_cle=[0,0,0]
     meilleur_score=-100 #de façon à ce que le score soit bien bas
@@ -310,14 +310,16 @@ def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
         for deuxieme_cle in range(26):
             for troisieme_cle in range(26):
                 texte_teste=enigma_dechiffrer(texte_chiffree,[premiere_cle,deuxieme_cle,troisieme_cle])
-                score=scorer(texte_teste,liste_bigrammes,liste_bigrammes_rares)[0]
+                score,nb,proportion=scorer(texte_teste,liste_bigrammes,liste_bigrammes_rares) #permet d'appeler la fonction une seule fois
+
 
                 if score>meilleur_score:
                     meilleur_score=score #pour prendre en compte le meilleur score
                     meilleur_cle=[premiere_cle,deuxieme_cle,troisieme_cle]
                     meilleur_texte=texte_teste
 
-                if score>= seuil: #si ça rentre dedans, on arrête la boucle interminable
+                if proportion>= seuil_ideal*0.9: #si ça rentre dedans, on arrête la boucle interminable
+                    #le seuil qui se base sur un vrai texte francais est ideal, donc on prend 90% de ce seuil pour le vrai bon seuil
                     return meilleur_texte, meilleur_cle
 
     return meilleur_texte, meilleur_cle
@@ -442,6 +444,6 @@ if __name__ == "__main__":
             print("\nBrute force Enigma")
             texte_dechiffree, cle = brute_force_enigma(resultat, liste_bigrammes, liste_bigrammes_rares)
             score, nb, proportion = scorer(texte_dechiffree, liste_bigrammes, liste_bigrammes_rares)
+            print(f"\ntexte décrypté :\n{texte_dechiffree} ")
             print(f"\nClé trouvée ≡ {cle} [26]")
             print(f"Proportion de bigrammes reconnus : {proportion*100:.1f}%")
-            print(f"\ntexte décrypté :\n{texte_dechiffree} ")
