@@ -196,6 +196,7 @@ def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
     mot="" #pour initialiser le mot qui sera vide au départ
     #NOS LISTE BIGRAMME EST EN MINUSCULE et sans accent, donc on normalise
     nombre_de_bigrammes_testes=0 #nombre de paire de lettre examiné
+    nombre_de_bigrammes_rares=0
     texte_teste=normaliser(texte_teste)
     for caractere in texte_teste + " ": #on parcourt tous les caracteres du texte un par un
         #l'ajout de " " sert à ajouter un espace à la fin du dernier mot du texte pour qu'il soit ajouté comme un mot
@@ -210,7 +211,10 @@ def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
                     if paire in liste_bigramme:
                         score=score+1
                     elif paire in liste_bigrammes_rares:
-                        score=score-2
+                        score=score-3 #le -3 permet de faire plus baisser le score
+                        nombre_de_bigrammes_rares+=1
+                        if nombre_de_bigrammes_rares>=3:
+                            break #on sort ainsi de cette boucle, on sairt que ça ne sera pas cette clé
             mot="" #on repart de 0 pour le prochain mot
     #Calcul proportion de bigramme dans le texte
     if nombre_de_bigrammes_testes > 0:
