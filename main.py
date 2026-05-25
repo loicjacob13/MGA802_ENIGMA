@@ -137,6 +137,13 @@ def enigma_chiffrer(texte_original):
             texte_chiffree[i] = texte_original[i]
     return "".join(texte_chiffree),cle
 
+def definir_seuil(nom_fichier,liste_bigramme,liste_bigrammes_rares,ligne_debut=32,ligne_fin=18153):
+#les id du début et fin permettent de bien prendre en compte uniquement du texte et non des commentaires en anglais
+    with open(nom_fichier, "r",encoding="utf-8") as fichier:
+        lignes=fichier.readlines()
+    texte_reference="".join(lignes[ligne_debut:ligne_fin])
+    score,nombre_de_bigrammes_testes,proportion=scorer(texte_reference,liste_bigramme,liste_bigrammes_rares)
+    return score, nombre_de_bigrammes_testes, proportion
 
 def enigma_dechiffrer(texte_chiffree,cle):
 
