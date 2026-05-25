@@ -73,7 +73,7 @@ Ensuite, pour chaque texte, notre fonction extrait tous les bigrammes du texte. 
 
 On a au final un ratio qui est calculé : `score / nombre_de_bigrammes_testés`.
 
-Le seuil d'arrêt précoce est pas arbitraire. Il est calculé dynamiquement à l'aide d'un vrai texte français, ici *Les Misérables*. Le seuil est fixé à 90% de cette proportion de référence. Ainsi, lorsqu'on parcours les 17 576 combinaisons, si une combinaison de clés atteint ce seuil, on retourne directement le résultat. En revanche, pour les textes très courts, il est possible que ce seuil ne soit jamais dépassé (quand il y a moins de 10 bigrammes par exemple). Dans ce cas, la combinaison avec le meilleur score absolue sera choisie.
+Le seuil d'arrêt précoce est pas arbitraire. Il est calculé dynamiquement à l'aide d'un vrai texte français, ici *Les Misérables*. Le seuil est fixé à 85% de cette proportion de référence. Ainsi, lorsqu'on parcours les 17 576 combinaisons, si une combinaison de clés atteint ce seuil, on retourne directement le résultat. En revanche, pour les textes très courts, il est possible que ce seuil ne soit jamais dépassé (quand il y a moins de 10 bigrammes par exemple). Dans ce cas, la combinaison avec le meilleur score absolue sera choisie.
 
 ---
 
@@ -99,4 +99,4 @@ Le projet a été hébergé sur un dépôt public généré à partir du templat
 ---
 
 ## 6. Conclusion
-Ce mini-projet A à été une très bone opportunité de mise en pratique des concepts fondamentaux de la programmation structurée en Python dans un contexte collaboratif. L'implémentation de la variante Enigma César nous a confrontés aux réalités de la complexité algorithmique et nous a poussés à trouver des systèmes d'analyse plus ou moins poussés pour améliorer l'efficacité et l'automatisation. L'utilisation de `pytest` et de GitHub ont été très pédagogiques.
+Ce mini-projet A a été une très bone opportunité de mise en pratique des concepts fondamentaux de la programmation structurée en Python dans un contexte collaboratif. L'implémentation de la variante Enigma César nous a confrontés aux réalités de la complexité algorithmique et nous a poussés à trouver des systèmes d'analyse plus ou moins poussés pour améliorer l'efficacité et l'automatisation. L'utilisation de `pytest` et de GitHub ont été très pédagogiques.
