@@ -162,17 +162,30 @@ def charger_bigrammes(nombre_de_bigramme):
     liste_bigrammes=[] #liste vide pour stocker nos bigrammes
     nom_fichier="french_bigrams.txt"
     with open (nom_fichier,"r", encoding="utf-8") as fichier:
-        for i in range (nombre_de_bigramme):
-            liste_bigrammes.append(((fichier.readline()).split()[0]).lower()) #ici l'ajout de [0] permet de prendfe seulement le premier bout
+        for ligne in fichier:
+            if len(liste_bigrammes) >= nombre_de_bigramme:
+                break
+            bigramme = ligne.split()[0].lower()
+            if all(lettre in alphabet for lettre in bigramme):
+                liste_bigrammes.append(bigramme)
     return liste_bigrammes
 
+def charger_bigrammes_rares(nombre_de_bigrammes_rares=50):
+    liste_bigrammes_rares=[] #liste vide pour stocker nos bigrammes
+    nom_fichier="french_bigrams.txt"
+    toutes_les_lignes=[]
+    with open (nom_fichier,"r", encoding="utf-8") as fichier:
+        for ligne in fichier:
+            parties = ligne.split()
+            if len(parties) >= 1: #on vérifie que la partie n'est pas vide
+                    bigramme = parties[0].lower()
+                    if all(lettre in alphabet for lettre in bigramme) and len(bigramme) == 2:
+                        toutes_les_lignes.append(bigramme)
+    liste_bigrammes_rares = toutes_les_lignes[-nombre_de_bigrammes_rares:]
+    return liste_bigrammes_rares
 
-def charger_bigrammes_rares():
-    liste_bigrammes_rare=["qz","qx","qy","jx","wx","zx","qw","hx","vz","jq","qk","qh","qn","qg","qv","qb","qj","jz","jw","jv","jf","jg","wq","wz","wv","kx","kz","fz","fx","xz"]
-    return liste_bigrammes_rare
 
-
-#on va essyaer de faire un pseudo-code pour la fonction brute force
+#on va essayer de faire un pseudo-code pour la fonction brute force
 #on va faire une fonction qui va découper le texte avec des espaces en une liste qui contient chaque mot sans espace.
 
 def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
@@ -181,7 +194,7 @@ def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
     liste_mots="" #liste vide au départ
     mot="" #pour initialiser le mot qui sera vide au départ
     #NOS LISTE BIGRAMME EST EN MINUSCULE et sans accent, donc on normalise
-    nombre_de_bigrammes_testés=0 #nombre de paire de lettre examiné
+    nombre_de_bigrammes_testes=0 #nombre de paire de lettre examiné
     texte_teste=normaliser(texte_teste)
     for caractere in texte_teste + " ": #on parcourt tous les caracteres du texte un par un
         #l'ajout de " " sert à ajouter un espace à la fin du dernier mot du texte pour qu'il soit ajouté comme un mot
@@ -192,13 +205,18 @@ def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
             if len(mot)>=2: #ce if est pour ne pas prendre en compte les mot à 1 carctere pour le score
                 for i in range(len(mot)-1): #ici on met le -1 pour que l'indce i+1 du mot existe bien
                     paire=mot[i]+mot[i+1]
-                    nombre_de_bigrammes_testés+=1
+                    nombre_de_bigrammes_testes+=1
                     if paire in liste_bigramme:
                         score=score+1
                     elif paire in liste_bigrammes_rares:
                         score=score-2
             mot="" #on repart de 0 pour le prochain mot
-    return score,nombre_de_bigrammes_testés
+    #Calcul proportion de bigramme dans le texte
+    if nombre_de_bigrammes_testes > 0:
+        proportion = score / nombre_de_bigrammes_testes
+    else:
+        proportion = 0
+    return score,nombre_de_bigrammes_testes,proportion
 
 def brute_force_cesar(texte_chiffree,liste_bigramme,liste_bigrammes_rares):
     #bete et mechant, on va tester les differentes cles et identifier laquelle est la meilleure selon le score
@@ -207,7 +225,7 @@ def brute_force_cesar(texte_chiffree,liste_bigramme,liste_bigrammes_rares):
     meilleur_texte=""
     for cle in range(26): #26 lettres de l'alphabet
         texte_teste=dechiffrer(texte_chiffree,cle)
-        score,_=scorer(texte_teste, liste_bigramme, liste_bigrammes_rares)
+        score,nb,proportion=scorer(texte_teste, liste_bigramme, liste_bigrammes_rares)
         if score>meilleur_score:
             meilleur_cle=cle
             meilleur_score=score
@@ -215,8 +233,7 @@ def brute_force_cesar(texte_chiffree,liste_bigramme,liste_bigrammes_rares):
     return meilleur_texte, meilleur_cle
 
 def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
-
-#cette fonction agit comme un raccourci, donc on teste le cas "e".
+    """cette fonction agit comme un raccourci, donc on teste le cas "e"."""
     nombre_du_caractere_le_plus_redondant=0 #init de cette variable
     texte_chiffree=normaliser(texte_chiffree)
     nombre_total_lettres=0
@@ -260,7 +277,7 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
 
 # on a donc la bonne clé, on va appeler la fonction scorer et la fonction dechiffrer
     texte_dechiffre=dechiffrer(texte_chiffree,cle)
-    score,_=scorer(texte_dechiffre,liste_bigrammes,liste_bigrammes_rares)
+    score,nb,proportion=scorer(texte_dechiffre,liste_bigrammes,liste_bigrammes_rares)
 
     if score>int(0.2 * (nombre_total_lettres/2) ): #si le score est assez élévé
         return texte_dechiffre, cle, score
@@ -270,8 +287,8 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
 def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
     nombre_de_bigrammes_testes=scorer(texte_chiffree,liste_bigrammes,liste_bigrammes_rares)[1] #car on veut le deuxième return de la fonction scorer
 # ce nombre là est essentiel pour se baser sur un seuil réel
-    seuil=int(0.7*nombre_de_bigrammes_testes)
-    #notre seuil a été fixé de telle façon que s'il y a 70% des bigrammes qui font partie des bigrammes les plus redondant de la langue française, cela certifie que ce sera bon
+    seuil=int(0.9*nombre_de_bigrammes_testes)
+    #notre seuil a été fixé de telle façon que s'il y a 90% des bigrammes qui font partie des bigrammes les plus redondant de la langue française, cela certifie que ce sera bon
 # on va gérer le cas des textes courts
     meilleur_cle=[0,0,0]
     meilleur_score=-100 #de façon à ce que le score soit bien bas
@@ -284,7 +301,7 @@ def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
                 score=scorer(texte_teste,liste_bigrammes,liste_bigrammes_rares)[0]
 
                 if score>meilleur_score:
-                    meilleur_score=score #pour prende en compte le meilleur score
+                    meilleur_score=score #pour prendre en compte le meilleur score
                     meilleur_cle=[premiere_cle,deuxieme_cle,troisieme_cle]
                     meilleur_texte=texte_teste
 
@@ -412,5 +429,7 @@ if __name__ == "__main__":
         elif action == 3: #Brute force Enigma
             print("\nBrute force Enigma")
             texte_dechiffree, cle = brute_force_enigma(resultat, liste_bigrammes, liste_bigrammes_rares)
+            score, nb, proportion = scorer(texte_dechiffree, liste_bigrammes, liste_bigrammes_rares)
             print(f"\nClé trouvée ≡ {cle} [26]")
+            print(f"Proportion de bigrammes reconnus : {proportion*100:.1f}%")
             print(f"\ntexte décrypté :\n{texte_dechiffree} ")
