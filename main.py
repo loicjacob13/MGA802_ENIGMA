@@ -457,4 +457,4 @@ if __name__ == "__main__":
             score, nb, proportion = scorer(texte_dechiffree, liste_bigrammes, liste_bigrammes_rares)
             print(f"\ntexte décrypté :\n{texte_dechiffree} ")
             print(f"\nClé trouvée ≡ {cle} [26]")
-            print(f"Proportion de bigrammes reconnus : {proportion*100:.1f}%")
+            print(f"Proportion de bigrammes reconnus : {proportion*100:.1f}%") #un chiffre après la virgule
