@@ -144,8 +144,10 @@ def definir_seuil(nom_fichier,liste_bigrammes,liste_bigrammes_rares):
     texte_reference="".join(lignes)
     score,nombre_de_bigrammes_testes,proportion=scorer(texte_reference,liste_bigrammes,liste_bigrammes_rares)
     return score, nombre_de_bigrammes_testes, proportion
-
-
+#nous avons 2 inconnues dans ce code : le nombre de bigrammes contenue dans les 2 listes de bigrammes: usuels et rare et le seuil qui certifie que le texte est en français
+#en fixant le nombre de bigramme contenue dans les 2 listes, on appelle cette focntion qui se base sur un fichier texte open source qui va compter la proportion de bigrammes contenue dans notre liste de bigramme usuels de la langue française
+#ainsi on aura une valeur de proportion valable et certifiée
+#étant donné que le roman est un exemple long, sans fautes, la proportion est ideale et on va donc prendre 80% de cette proportion pour notre seuil de validité pour savoir quand le texte sera français
 
 
 def enigma_dechiffrer(texte_chiffree,cle):
@@ -153,7 +155,7 @@ def enigma_dechiffrer(texte_chiffree,cle):
     texte_original = [" "] * len(texte_chiffree)
     liste_index_original = [0] * len(texte_chiffree)
     liste_index_chiffree = [0] * len(texte_chiffree)
-    j=0
+    j=0#pour faire varier l'indice de la liste cle
     for i in range(len(texte_chiffree)):
         if texte_chiffree[i].lower() in alphabet:
             liste_index_chiffree[i] = alphabet.find(texte_chiffree[i].lower()) #aprés le for, on aura notre liste d'index
@@ -173,10 +175,10 @@ def charger_bigrammes(nombre_de_bigramme):
     nom_fichier="french_bigrams.txt"
     with open (nom_fichier,"r", encoding="utf-8") as fichier:
         for ligne in fichier:
-            if len(liste_bigrammes) >= nombre_de_bigramme:
+            if len(liste_bigrammes) >= nombre_de_bigramme: #si liste atteint taille demandé, on sort de la boucle
                 break
-            bigramme = ligne.split()[0].lower()
-            if all(lettre in alphabet for lettre in bigramme):
+            bigramme = ligne.split()[0].lower() #decoupe la ligne selon les epsaces et recupere le premier mot qui correspond au bigramme, lower() pour stocker des minuscles
+            if all(lettre in alphabet for lettre in bigramme): #verifie que chaque lettre du bigramme appartientg bien à l'alphabet sinon c'est pas pris en compte
                 liste_bigrammes.append(bigramme)
     return liste_bigrammes
 
@@ -191,7 +193,7 @@ def charger_bigrammes_rares(nombre_de_bigrammes_rares=50):
                     bigramme = parties[0].lower()
                     if all(lettre in alphabet for lettre in bigramme) and len(bigramme) == 2:
                         toutes_les_lignes.append(bigramme)
-    liste_bigrammes_rares = toutes_les_lignes[-nombre_de_bigrammes_rares:]
+    liste_bigrammes_rares = toutes_les_lignes[-nombre_de_bigrammes_rares:] #ici le - est primordial car on doit prendre la liste par les bas car on veut les bigrammes les moins frequents d'ou le -
     return liste_bigrammes_rares
 
 
@@ -221,10 +223,10 @@ def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
                     if paire in liste_bigramme:
                         score=score+1
                     elif paire in liste_bigrammes_rares:
-                        score=score-3 #le -3 permet de faire plus baisser le score
+                        score=score-3 #le -3 permet de faire plus baisser le score, donc penalise plus
                         nombre_de_bigrammes_rares+=1
                         if nombre_de_bigrammes_rares>=3:
-                            break #on sort ainsi de cette boucle, on sairt que ça ne sera pas cette clé
+                            break # dès lors qu'on rencontre 3 bigrammes rares, on sait que ça ne sera pas cette clé, on passe donc directment à la prochaine clé
             mot="" #on repart de 0 pour le prochain mot
     #Calcul proportion de bigramme dans le texte
     if nombre_de_bigrammes_testes > 0:
@@ -234,7 +236,7 @@ def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
     return score,nombre_de_bigrammes_testes,proportion
 
 def brute_force_cesar(texte_chiffree,liste_bigramme,liste_bigrammes_rares):
-    #bete et mechant, on va tester les differentes cles et identifier laquelle est la meilleure selon le score
+    #bete et mechant, on va tester toutes les differentes cles et identifier laquelle est la meilleure selon le score
     meilleur_cle=0
     meilleur_score=-5
     meilleur_texte=""
@@ -280,8 +282,8 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
 
 #mtn on va essyaer de fixer une part de présence afin de s'assurer que ça soit bien un bon critere
 
-    proportion=nombre_du_caractere_le_plus_redondant/nombre_total_lettres
-    if proportion<0.15: #en utilisant ce critère (une proportion de 15%) on s'assure que c'est vraiment redondant
+    proportion_de_lettre_la_plus_redondante=nombre_du_caractere_le_plus_redondant/nombre_total_lettres
+    if proportion_de_lettre_la_plus_redondante<0.15: #en utilisant ce critère (une proportion de 15%) on s'assure que c'est vraiment redondant
         print("la lettre la plus fréquente représente moins de 15% donc on ne peut pas utiliser l'hypothèse que cette lettre est la lettre e")
         return None
 
@@ -293,8 +295,8 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
 # on a donc la bonne clé, on va appeler la fonction scorer et la fonction dechiffrer
     texte_dechiffre=dechiffrer(texte_chiffree,cle)
     score,nb,proportion=scorer(texte_dechiffre,liste_bigrammes,liste_bigrammes_rares)
-
-    if score>int(0.2 * (nombre_total_lettres/2) ): #si le score est assez élévé
+    seuil_ideal=definir_seuil("Les_Miserables.txt",liste_bigrammes,liste_bigrammes_rares)
+    if proportion>0.85 *seuil_ideal: #même logique de seuil que dans brut force
         return texte_dechiffre, cle, score
     else:
         return None #pour sortir de cette boucle
@@ -302,7 +304,7 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
 
 
 def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
-
+#pour les textes courts, on désactive l'arrêt anticipé si le texte contient moins de 10 bigrammes
 
 # on va gérer le cas des textes courts
     meilleur_cle=[0,0,0]
@@ -329,7 +331,7 @@ def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
                     meilleur_cle=[premiere_cle,deuxieme_cle,troisieme_cle]
                     meilleur_texte=texte_teste
 
-                if not texte_court and proportion>= seuil_ideal*0.9: #si ça rentre dedans, on arrête la boucle interminable
+                if not texte_court and proportion>= seuil_ideal*0.85: #si ça rentre dedans, on arrête la boucle interminable
                     #Pour que ça rentre dedans, le texte doit contenir au moins 10 bigrammes examinés
                     #sinon le code fait toutes les possibilités et renvoie celle avec le meilleur score
                     #le seuil qui se base sur un vrai texte francais est ideal, donc on prend 90% de ce seuil pour le vrai bon seuil
