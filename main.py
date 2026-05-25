@@ -145,6 +145,9 @@ def definir_seuil(nom_fichier,liste_bigrammes,liste_bigrammes_rares):
     score,nombre_de_bigrammes_testes,proportion=scorer(texte_reference,liste_bigrammes,liste_bigrammes_rares)
     return score, nombre_de_bigrammes_testes, proportion
 
+
+
+
 def enigma_dechiffrer(texte_chiffree,cle):
 
     texte_original = [" "] * len(texte_chiffree)
@@ -299,18 +302,24 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
 
 def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
 
-    seuil_ideal=definir_seuil("Les_Miserables.txt",liste_bigrammes,liste_bigrammes_rares)[2]
-#le seuil ideal correspond à la proportion ideale
+
 # on va gérer le cas des textes courts
     meilleur_cle=[0,0,0]
     meilleur_score=-100 #de façon à ce que le score soit bien bas
+    meilleur_texte=""
+    nombre_bigrammes_examines=scorer(texte_chiffree,liste_bigrammes,liste_bigrammes_rares)[1] #on calcule juste une fois le nombre de bigrammes examinés dans le texte
+    texte_court=nombre_bigrammes_examines<10 #booléen qui renvoie True si le nb de bigrammes examinés est inférieur à 10
+
+    if not texte_court: #si le texte est court, ça ne sert à rien d'appeler definir_seuil()
+        seuil_ideal=definir_seuil("Les_Miserables.txt",liste_bigrammes,liste_bigrammes_rares)[2]
+#le seuil ideal correspond à la proportion ideale
 
     #triple_boucle des indices
     for premiere_cle in range(26):
         for deuxieme_cle in range(26):
             for troisieme_cle in range(26):
                 texte_teste=enigma_dechiffrer(texte_chiffree,[premiere_cle,deuxieme_cle,troisieme_cle])
-                score,nb,proportion=scorer(texte_teste,liste_bigrammes,liste_bigrammes_rares) #permet d'appeler la fonction une seule fois
+                score,nombre_bigrammes_examines,proportion=scorer(texte_teste,liste_bigrammes,liste_bigrammes_rares) #permet d'appeler la fonction une seule fois
 
 
                 if score>meilleur_score:
@@ -318,7 +327,9 @@ def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
                     meilleur_cle=[premiere_cle,deuxieme_cle,troisieme_cle]
                     meilleur_texte=texte_teste
 
-                if proportion>= seuil_ideal*0.9: #si ça rentre dedans, on arrête la boucle interminable
+                if not texte_court and proportion>= seuil_ideal*0.9: #si ça rentre dedans, on arrête la boucle interminable
+                    #Pour que ça rentre dedans, le texte doit contenir au moins 10 bigrammes examinés
+                    #sinon le code fait toutes les possibilités et renvoie celle avec le meilleur score
                     #le seuil qui se base sur un vrai texte francais est ideal, donc on prend 90% de ce seuil pour le vrai bon seuil
                     return meilleur_texte, meilleur_cle
 
