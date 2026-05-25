@@ -270,11 +270,11 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
 def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
     nombre_de_bigrammes_testes=scorer(texte_chiffree,liste_bigrammes,liste_bigrammes_rares)[1] #car on veut le deuxième return de la fonction scorer
 # ce nombre là est essentiel pour se baser sur un seuil réel
-    seuil=int(0.4*nombre_de_bigrammes_testes)
-    #notre seuil à été fixé de telle façon que si il y a 40% des bigrammes qui font partie des bigrammes les plus redondant de la langue française, cela certifie que ce sera bon
+    seuil=int(0.7*nombre_de_bigrammes_testes)
+    #notre seuil a été fixé de telle façon que s'il y a 70% des bigrammes qui font partie des bigrammes les plus redondant de la langue française, cela certifie que ce sera bon
 # on va gérer le cas des textes courts
     meilleur_cle=[0,0,0]
-    meilleur_score=-100 #de façon à que le score soit bien bas
+    meilleur_score=-100 #de façon à ce que le score soit bien bas
 
     #triple_boucle des indices
     for premiere_cle in range(26):
@@ -350,7 +350,7 @@ if __name__ == "__main__":
 
     #Chargement des bigrammes si on réalise l'action brute force
     if action == 3:
-        liste_bigrammes = charger_bigrammes(200)
+        liste_bigrammes = charger_bigrammes(200) #On charge les 200 bigrammes les plus courants de la langue française
         liste_bigrammes_rares = charger_bigrammes_rares()
 
     #Mode César
