@@ -15,7 +15,7 @@ import string
 #CONSTANTES
 
 alphabet = string.ascii_lowercase #renvoie l'alphabet
-liste_chiffres= list(range(10))
+liste_chiffres= list(range(10)) #renvoie les chiffres
 
 def normaliser(texte):
     """Renvoie une lettre sans accent par l'intermédiaire d'un dictionnaire"""
@@ -38,12 +38,14 @@ def normaliser(texte):
     return resultat
 
 def lire_texte(fichier_a_lire):
+
     while True:
+        print("=" * 60)
         print("Voulez-vous écrire votre texte ou ouvrir un fichier ?")
         print("1- Écrire votre texte")
         print("2- Ouvrir un fichier")
         print("3- Coller un texte multiligne")
-
+        print("=" * 60)
         try:
             choix = int(input("1, 2 ou 3 ? ").strip())
         except ValueError:  #Si l'utilisateur tape "a" au lieu de 1, 2 ou 3
@@ -51,7 +53,7 @@ def lire_texte(fichier_a_lire):
             continue  #On recommence la boucle
 
         if choix == 1:        #Cas 1 pour un texte avec une seule ligne (trivial)
-            print("Écrivez votre texte ici (pas de retour à la ligne possible) : ")
+            texte_original= input("Écrivez votre texte ici (pas de retour à la ligne possible) : ")
             return normaliser(texte_original)
 
         elif choix == 2: #Cas 2 avec un fichier, on boucle jusqu'à ce que le fichier existe
@@ -137,14 +139,7 @@ def enigma_chiffrer(texte_original):
 
 
 def enigma_dechiffrer(texte_chiffree,cle):
-    cle = [0, 0, 0]          #on crée la liste qui contient les 3 clés
-    for k in range(len(cle)):        #on parcourt les 3 emplacements de la liste des clés
-        while True:               #ici, c'est une boucle infinie, on n'en sort que si l'utilisateur met une clé valide
-            try:
-                cle[k] = int(input(f"Saisis ta clé numéro {k+1}: ")) % 26      #on demande unbe clé à user, le int vérifie que c'est bien un entier et modulo 26 pour l'alphabet
-                break       #si pas d'erreur, on passe à la clé suivant
-            except ValueError:           #cette partie ne s'active que si l'utilisateur ne met pas un entier (ex: "abc", "3.2", blablabla...)
-                print("Ta clé n'est pas bonne, mets uniquement des nombres entiers")
+
     texte_original = [" "] * len(texte_chiffree)
     liste_index_original = [0] * len(texte_chiffree)
     liste_index_chiffree = [0] * len(texte_chiffree)
@@ -161,15 +156,14 @@ def enigma_dechiffrer(texte_chiffree,cle):
     return "".join(texte_original)
 
 
-#on rechange d'idée, je vais importer des bi-grammes les plus communément utilisées dans la la langue fr
-#
+#on rechange d'idée, je vais importer les bigrammes les plus communément utilisées de la langue française
+
 def charger_bigrammes(nombre_de_bigramme):
-    liste_bigrammes=[] #liste vide qui stockera nos bigrammes
+    liste_bigrammes=[] #liste vide pour stocker nos bigrammes
     nom_fichier="french_bigrams.txt"
     with open (nom_fichier,"r", encoding="utf-8") as fichier:
         for i in range (nombre_de_bigramme):
-            liste_bigrammes.append(((fichier.readline()).split()[0]).lower()) #ici l'ajout de [0] permet de prendfe suelement le premier bout
-    #return liste_bigrammes
+            liste_bigrammes.append(((fichier.readline()).split()[0]).lower()) #ici l'ajout de [0] permet de prendfe seulement le premier bout
     return liste_bigrammes
 
 
@@ -178,9 +172,8 @@ def charger_bigrammes_rares():
     return liste_bigrammes_rare
 
 
-#on va essyaer de faire un pseudo-code pour la fonction brut force
-#on va essayer
-#on va faire une fonction qui va découper le texte avce espaces en une liste qui contient chaque mots sans espaces.
+#on va essyaer de faire un pseudo-code pour la fonction brute force
+#on va faire une fonction qui va découper le texte avec des espaces en une liste qui contient chaque mot sans espace.
 
 def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
     score=0 #initialisation du score
@@ -203,7 +196,7 @@ def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
                     if paire in liste_bigramme:
                         score=score+1
                     elif paire in liste_bigrammes_rares:
-                        score=score-1
+                        score=score-2
             mot="" #on repart de 0 pour le prochain mot
     return score,nombre_de_bigrammes_testés
 
@@ -214,7 +207,7 @@ def brute_force_cesar(texte_chiffree,liste_bigramme,liste_bigrammes_rares):
     meilleur_texte=""
     for cle in range(26): #26 lettres de l'alphabet
         texte_teste=dechiffrer(texte_chiffree,cle)
-        score=scorer(texte_teste, liste_bigramme, liste_bigrammes_rares)
+        score,_=scorer(texte_teste, liste_bigramme, liste_bigrammes_rares)
         if score>meilleur_score:
             meilleur_cle=cle
             meilleur_score=score
@@ -265,9 +258,9 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
     index_lettre_la_plus_redondante=alphabet.find(lettre_la_plus_redondante)
     cle=(index_lettre_la_plus_redondante-alphabet.find("e")) % 26
 
-# on a donc la bonen clé, on va appeler la fonction scorer et la fonction dechiffrer
+# on a donc la bonne clé, on va appeler la fonction scorer et la fonction dechiffrer
     texte_dechiffre=dechiffrer(texte_chiffree,cle)
-    score=scorer(texte_dechiffre,liste_bigrammes,liste_bigrammes_rares)
+    score,_=scorer(texte_dechiffre,liste_bigrammes,liste_bigrammes_rares)
 
     if score>int(0.2 * (nombre_total_lettres/2) ): #si le score est assez élévé
         return texte_dechiffre, cle, score
@@ -277,7 +270,7 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
 def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
     nombre_de_bigrammes_testes=scorer(texte_chiffree,liste_bigrammes,liste_bigrammes_rares)[1] #car on veut le deuxième return de la fonction scorer
 # ce nombre là est essentiel pour se baser sur un seuil réel
-    seuil=int(0,4*nombre_de_bigrammes_testes)
+    seuil=int(0.4*nombre_de_bigrammes_testes)
     #notre seuil à été fixé de telle façon que si il y a 40% des bigrammes qui font partie des bigrammes les plus redondant de la langue française, cela certifie que ce sera bon
 # on va gérer le cas des textes courts
     meilleur_cle=[0,0,0]
@@ -301,10 +294,6 @@ def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
     return meilleur_texte, meilleur_cle
 
 
-
-
-
-
 if __name__ == "__main__":
     print("="*60)
     print(" BIENVENUE DANS CE PROGRAMME DE CHIFFREMENT / DÉCHIFFREMENT ")
@@ -313,7 +302,7 @@ if __name__ == "__main__":
     print("Ce programme va vous permettre de chiffrer ou de déchiffre un texte")
     print("à l'aide de deux méthodes qui sont basées sur le chiffrement de César :")
     print()
-    print(" - César classque : qui n'utilise qu'une seule clé de décalage")
+    print(" - César classique : qui n'utilise qu'une seule clé de décalage")
     print(" - Enigma-César : qui utilise trois clés de décalage successive")
     print()
     print("Le programme vous permet aussi de retrouver automatiquement la clé")
@@ -326,53 +315,102 @@ if __name__ == "__main__":
     resultat = lire_texte(None)
     print(f"\ntexte:{resultat}")
 
-    #Demande du mode
+    #Choix du mode
     while True:
+        print("=" * 60)
         print("Quel mode de chiffrement voulez-vous utiliser ?")
         print("1- César (une seule clé)")
         print("2- Enigma (un triplet de clés)")
-        print("3- Brute force César (trouve la clé automatiquement)")
+        print("=" * 60)
         try:
-            mode = int(input("1, 2 ou 3 ?").strip())
-            if mode in [1,2,3]:
+            mode = int(input("1 ou 2 ?").strip())
+            if mode in [1,2]:
                 break
             else:
-                 print("Erreur : entrez uniquement 1, 2 ou 3.")
+                 print("Erreur : entrez uniquement 1 ou 2.")
+        except ValueError:
+            print("Erreur : entrez uniquement 1 ou 2.")
+
+    #Choix de l'action
+    while True:
+        print("=" * 60)
+        print("Quelle action voulez-vous effectuer ?")
+        print("1- Chiffrer")
+        print("2- Déchiffrer (avec la clé)")
+        print("3- Déchiffrer automatiquement (brute force)")
+        print("=" * 60)
+        try:
+            action = int(input("1, 2 ou 3 ?").strip())
+            if action in [1,2,3]:
+                break
+            else:
+                print("Erreur : entrez uniquement 1, 2 ou 3.")
         except ValueError:
             print("Erreur : entrez uniquement 1, 2 ou 3.")
 
-    if mode == 1:
-        while True:
-            try:
-                cle=int(input("Saisis de la cle: ").strip())
-                break
-            except ValueError:
-                print("Erreur : saisissez une clé entière.")
-        #Chiffrement Cesar
-        texte_chiffree = chiffrer(resultat, cle)
-        print(f"\ntexte encrypté:\n{texte_chiffree}")
-
-    elif mode == 2:
-        #Chiffrement Enigma_Cesar
-         texte_chiffree, cle = enigma_chiffrer(resultat)
-         print(f"\ntexte encrypté:\n{texte_chiffree}")
-
-    elif mode == 3:
-        #Chargement des bigrammes
+    #Chargement des bigrammes si on réalise l'action brute force
+    if action == 3:
         liste_bigrammes = charger_bigrammes(200)
         liste_bigrammes_rares = charger_bigrammes_rares()
 
-        #Essai avec la méthode du "e" d'abord (plus rapide)
-        resultat_e = cas_du_e(resultat,liste_bigrammes, liste_bigrammes_rares)
+    #Mode César
+    if mode == 1:
+        if action == 1: #Chiffrement César
+            while True:
+                try:
+                    cle=int(input("Saisis de la cle: ").strip())
+                    break
+                except ValueError:
+                    print("Erreur : saisissez une clé entière uniquement.")
+            texte_chiffree = chiffrer(resultat, cle)
+            print(f"\ntexte encrypté:\n{texte_chiffree}")
 
-        if resultat_e is not None:
-            texte_dechiffree, cle, score = resultat_e
-            print(f" \n Clé trouvée par méthode du 'e' : {cle}")
-            print(f"Score : {score}")
-            print(f"\ntexte décrypté :\n{texte_dechiffree} ")
-        else:
-            # Si la méthode du "e" n'aboutit pas, on réalise le brut force complet du texte
-            print("\nMéthode du 'e' insuffisante, utilisation du brute force complet")
-            texte_dechiffree, cle = brute_force_cesar(resultat,liste_bigrammes, liste_bigrammes_rares)
+        elif action == 2: #Déchiffrement César
+            while True:
+                try:
+                    cle=int(input("Saisis de la cle: ").strip())
+                    break
+                except ValueError:
+                    print("Erreur : saisissez une clé entière uniquement.")
+            texte_original = dechiffrer(resultat, cle)
+            print(f"\ntexte décrypté:\n{texte_original}")
+
+        elif action == 3:
+            #Essai avec la méthode du "e" d'abord (plus rapide)
+            resultat_e = cas_du_e(resultat,liste_bigrammes, liste_bigrammes_rares)
+
+            if resultat_e is not None:
+                texte_dechiffree, cle, score = resultat_e
+                print(f" \n Clé trouvée par méthode du 'e' : {cle}")
+                print(f"Score : {score}")
+                print(f"\ntexte décrypté :\n{texte_dechiffree} ")
+            else:
+                #Si la méthode du "e" n'aboutit pas, on réalise le brut force complet du texte
+                print("\nMéthode du 'e' insuffisante, utilisation du brute force complet")
+                texte_dechiffree, cle = brute_force_cesar(resultat,liste_bigrammes, liste_bigrammes_rares)
+                print(f"\nClé trouvée ≡ {cle} [26]")
+                print(f"\ntexte décrypté :\n{texte_dechiffree} ")
+
+    #Mode Enigma
+    if mode == 2:
+        if action == 1:  # Chiffrement Enigma
+            texte_chiffree, cle = enigma_chiffrer(resultat)
+            print(f"\ntexte encrypté:\n{texte_chiffree}")
+
+        elif action == 2:  # Déchiffrement Enigma
+            cle = [0,0,0]
+            for k in range(3):
+                while True:
+                    try:
+                        cle[k] = int(input(f"Saisis de la cle numéro {k+1}: ")) % 26
+                        break
+                    except ValueError:
+                        print("Entier uniquement")
+            texte_original = enigma_dechiffrer(resultat,cle)
+            print(f"\ntexte décrypté:\n{texte_original}")
+
+        elif action == 3: #Brute force Enigma
+            print("\nBrute force Enigma")
+            texte_dechiffree, cle = brute_force_enigma(resultat, liste_bigrammes, liste_bigrammes_rares)
             print(f"\nClé trouvée ≡ {cle} [26]")
             print(f"\ntexte décrypté :\n{texte_dechiffree} ")
