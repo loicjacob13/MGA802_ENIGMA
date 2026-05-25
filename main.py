@@ -126,7 +126,7 @@ def enigma_chiffrer(texte_original):
     texte_chiffree = [" "] * len(texte_original)
     liste_index_original = [0] * len(texte_original)
     liste_index_chiffree = [0] * len(texte_original)
-    j=0
+    j=0 #permet de comptabiliser l'indice de la clé
     for i in range(len(texte_original)):
         if texte_original[i].lower() in alphabet:
             liste_index_original[i] = alphabet.find(texte_original[i].lower()) #aprés le for, on aura notre liste d'index
@@ -199,6 +199,7 @@ def charger_bigrammes_rares(nombre_de_bigrammes_rares=50):
 #on va faire une fonction qui va découper le texte avec des espaces en une liste qui contient chaque mot sans espace.
 
 def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
+    #on va parcourir l'ensemble des mots et on compte ses paires de lettres successives
     score=0 #initialisation du score
     #on va créer une liste qui stocke chaque mot du texte,
     liste_mots="" #liste vide au départ
@@ -234,7 +235,7 @@ def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
 
 def brute_force_cesar(texte_chiffree,liste_bigramme,liste_bigrammes_rares):
     #bete et mechant, on va tester les differentes cles et identifier laquelle est la meilleure selon le score
-    meileur_cle=0
+    meilleur_cle=0
     meilleur_score=-5
     meilleur_texte=""
     for cle in range(26): #26 lettres de l'alphabet
@@ -309,6 +310,7 @@ def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
     meilleur_texte=""
     nombre_bigrammes_examines=scorer(texte_chiffree,liste_bigrammes,liste_bigrammes_rares)[1] #on calcule juste une fois le nombre de bigrammes examinés dans le texte
     texte_court=nombre_bigrammes_examines<10 #booléen qui renvoie True si le nb de bigrammes examinés est inférieur à 10
+    seuil_ideal=0
 
     if not texte_court: #si le texte est court, ça ne sert à rien d'appeler definir_seuil()
         seuil_ideal=definir_seuil("Les_Miserables.txt",liste_bigrammes,liste_bigrammes_rares)[2]
@@ -458,3 +460,4 @@ if __name__ == "__main__":
             print(f"\ntexte décrypté :\n{texte_dechiffree} ")
             print(f"\nClé trouvée ≡ {cle} [26]")
             print(f"Proportion de bigrammes reconnus : {proportion*100:.1f}%") #un chiffre après la virgule
+
