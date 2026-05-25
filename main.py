@@ -355,7 +355,7 @@ if __name__ == "__main__":
 
     #Mode César
     if mode == 1:
-        if action == 1: #Chiffrement César
+        if action == 1: #Chiffrement de César
             while True:
                 try:
                     cle=int(input("Saisis de la cle: ").strip())
@@ -365,7 +365,7 @@ if __name__ == "__main__":
             texte_chiffree = chiffrer(resultat, cle)
             print(f"\ntexte encrypté:\n{texte_chiffree}")
 
-        elif action == 2: #Déchiffrement César
+        elif action == 2: #Déchiffrement de César
             while True:
                 try:
                     cle=int(input("Saisis de la cle: ").strip())
