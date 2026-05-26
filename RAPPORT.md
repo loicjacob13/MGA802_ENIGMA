@@ -78,6 +78,9 @@ Le seuil d'arrêt précoce est pas arbitraire. Il est calculé dynamiquement à 
 Pour le petit textes, nous avions des soucis car plusieurs combinaisons de vrais bigrammes en même nombres étaient la meilleure solution. Dans ce cas là, le return était possiblement la meilleur phrase.
 On a utilisé une comparaison avec tous les mots du dictionnaire français pour trouver la bonne phrase.
 Cette méthode est beaucoup plus longue mais viable que si le nombre de mots est petit.
+Si plusieurs mots peuvent correspondre, le programme va renvoyer les différentes options de mots possibles.
+Pour le calcul du score final, les mots du dictionnaire comptent pour 70% alors que les bigrammes comptent pour 30%.
+Dans le cas de phrases avec très peu de mots, les mots sont plus influents que les bigrammes, d'où cette proportion modifiée.
 
 ---
 
