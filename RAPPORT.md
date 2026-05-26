@@ -85,9 +85,6 @@ Afin d'analyset l'efficacité de nos algorithmes, des mesures empiriques rigoure
 
 On remarque que le brute-force César est presque instantané, alors que le Enigma César est plus long (ce qui est normal).
 
-### 4.1 Analyse de la Complexité et Optimisation
-L'attaque sur le chiffrement de César est instantanée en raison de son coût algorithmique en temps constant $O(1)$ par rapport à l'espace des clés. 
-
 ---
 
 ## 5. Distribution des Tâches et Méthodologie Git
