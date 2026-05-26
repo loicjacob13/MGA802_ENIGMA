@@ -296,7 +296,7 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
 # on a donc la bonne clé, on va appeler la fonction scorer et la fonction dechiffrer
     texte_dechiffre=dechiffrer(texte_chiffree,cle)
     score,nb,proportion=scorer(texte_dechiffre,liste_bigrammes,liste_bigrammes_rares)
-    seuil_ideal=definir_seuil("Les_Miserables.txt",liste_bigrammes,liste_bigrammes_rares)
+    seuil_ideal=definir_seuil("Les_Miserables.txt",liste_bigrammes,liste_bigrammes_rares)[2]
     if proportion>0.85 *seuil_ideal: #même logique de seuil que dans brut force
         return texte_dechiffre, cle, score
     else:
