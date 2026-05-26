@@ -75,6 +75,8 @@ On a au final un ratio qui est calculé : `score / nombre_de_bigrammes_testés`.
 
 Le seuil d'arrêt précoce est pas arbitraire. Il est calculé dynamiquement à l'aide d'un vrai texte français, ici *Les Misérables*. Le seuil est fixé à 85% de cette proportion de référence. Ainsi, lorsqu'on parcours les 17 576 combinaisons, si une combinaison de clés atteint ce seuil, on retourne directement le résultat. En revanche, pour les textes très courts, il est possible que ce seuil ne soit jamais dépassé (quand il y a moins de 10 bigrammes par exemple). Dans ce cas, la combinaison avec le meilleur score absolue sera choisie.
 
+Attention, le brute-force comporte une grande limite pour les tests courts qui est simplement mathématique, car il peut exister une multitude de cas où l'ensemble des bigrammes examinés par le code appartiennent tous à la liste des bigrammes les plus redondants de la langue française. Pour y remédier, on aurait pu charger un dictionnaire complet de la langue française mais cette option est très longue et pas viable en pratique. 
+
 ---
 
 ## 4. Évaluation des Performances Temporelles
