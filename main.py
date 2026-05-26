@@ -197,6 +197,33 @@ def charger_bigrammes_rares(nombre_de_bigrammes_rares=50):
     liste_bigrammes_rares = toutes_les_lignes[-nombre_de_bigrammes_rares:] #ici le - est primordial car on doit prendre la liste par les bas car on veut les bigrammes les moins frequents d'ou le -
     return liste_bigrammes_rares
 
+def charger_dictionnaire(nom_fichier="dictionnaire.txt"):
+    """Charge un dictionnaire français depuis le fichier dictionnaire.txt, un mot par ligne"""
+    dictionnaire = set()
+    with open(nom_fichier, "r", encoding="utf-8") as fichier:
+        for ligne in fichier:
+            mot = normaliser(ligne.strip().lower()) #On normalise et met en minuscule
+            if mot: #On ignore les lignes vides
+                dictionnaire.add(mot)
+    return dictionnaire
+
+def scorer_mots(texte, dictionnaire):
+    """Score basé sur les mots reconnus dans le dictionnaire — pour les textes courts"""
+    texte_normalise = normaliser(texte.lower())
+    mots = []
+    mot = ""
+    for lettre in texte_normalise + " ":
+        if lettre in alphabet:
+            mot += lettre
+        else:
+            if len(mot) >= 2: #On ignore les mots d'une seule lettre
+                mots.append(mot)
+            mot = ""
+    if not mots:
+        return 0
+    mots_reconnus = sum(1 for mot in mots if mot in dictionnaire)
+    return mots_reconnus / len(mots)
+
 
 #on va essayer de faire un pseudo-code pour la fonction brute force
 #on va faire une fonction qui va découper le texte avec des espaces en une liste qui contient chaque mot sans espace.
@@ -213,8 +240,9 @@ def scorer(texte_teste,liste_bigramme,liste_bigrammes_rares):
     texte_teste=normaliser(texte_teste)
     for caractere in texte_teste + " ": #on parcourt tous les caracteres du texte un par un
         #l'ajout de " " sert à ajouter un espace à la fin du dernier mot du texte pour qu'il soit ajouté comme un mot
-        if caractere in alphabet: #si le caractere apparait ds l'alphabet alors ça siginfiera qu'il faut ce caractère comme constituant d'un mot
-            mot=mot+caractere.lower() #ainsi on va remplir ce mot par ce caractère en mettant tout en minuscule
+        caractere_min = caractere.lower()
+        if caractere_min in alphabet: #si le caractere apparait ds l'alphabet alors ça siginfiera qu'il faut ce caractère comme constituant d'un mot
+            mot=mot+caractere_min #ainsi on va remplir ce mot par ce caractère en mettant tout en minuscule
         else:
             #ce else caracterise la fin du mot car on rencontre soit un chiffre, soit un espace, soit un caractere alpha numerique
             if len(mot)>=2: #ce if est pour ne pas prendre en compte les mot à 1 carctere pour le score
@@ -281,7 +309,7 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
             nombre_du_caractere_le_plus_redondant=compteur[lettre]
             lettre_la_plus_redondante=lettre
 
-#mtn on va essyaer de fixer une part de présence afin de s'assurer que ça soit bien un bon critere
+#mtn on va essayer de fixer une part de présence afin de s'assurer que ça soit bien un bon critere
 
     proportion_de_lettre_la_plus_redondante=nombre_du_caractere_le_plus_redondant/nombre_total_lettres
     if proportion_de_lettre_la_plus_redondante<0.15: #en utilisant ce critère (une proportion de 15%) on s'assure que c'est vraiment redondant
@@ -297,48 +325,62 @@ def cas_du_e(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
     texte_dechiffre=dechiffrer(texte_chiffree,cle)
     score,nb,proportion=scorer(texte_dechiffre,liste_bigrammes,liste_bigrammes_rares)
     seuil_ideal=definir_seuil("Les_Miserables.txt",liste_bigrammes,liste_bigrammes_rares)[2]
-    if proportion>0.85 *seuil_ideal: #même logique de seuil que dans brut force
+    if proportion>0.95 *seuil_ideal: #même logique de seuil que dans brut force
         return texte_dechiffre, cle, score
     else:
         return None #pour sortir de cette boucle
 
 
+def brute_force_enigma(texte_chiffree, liste_bigrammes, liste_bigrammes_rares, dictionnaire=None):
+    nombre_bigrammes = scorer(texte_chiffree, liste_bigrammes, liste_bigrammes_rares)[1]
+    texte_court = nombre_bigrammes < 30 # on va gérer le cas des textes courts
 
-def brute_force_enigma(texte_chiffree,liste_bigrammes,liste_bigrammes_rares):
-#pour les textes courts, on désactive l'arrêt anticipé si le texte contient moins de 10 bigrammes
+    meilleur_cle = [0, 0, 0]
+    meilleur_score = -999
+    meilleur_texte = ""
+    seuil_ideal = definir_seuil("Les_Miserables.txt", liste_bigrammes, liste_bigrammes_rares)[2]
 
-# on va gérer le cas des textes courts
-    meilleur_cle=[0,0,0]
-    meilleur_score=-100 #de façon à ce que le score soit bien bas
-    meilleur_texte=""
-    nombre_bigrammes_examines=scorer(texte_chiffree,liste_bigrammes,liste_bigrammes_rares)[1] #on calcule juste une fois le nombre de bigrammes examinés dans le texte
-    texte_court=nombre_bigrammes_examines<10 #booléen qui renvoie True si le nb de bigrammes examinés est inférieur à 10
-    seuil_ideal=0
+    candidats = []  # On stocke toutes les bonnes combinaisons pour texte court
 
-    if not texte_court: #si le texte est court, ça ne sert à rien d'appeler definir_seuil()
-        seuil_ideal=definir_seuil("Les_Miserables.txt",liste_bigrammes,liste_bigrammes_rares)[2]
-#le seuil ideal correspond à la proportion ideale
+    if texte_court:
+        print("Texte court detecte — toutes les combinaisons coherentes seront affichees")
 
-    #triple_boucle des indices
+    # triple_boucle des indices
     for premiere_cle in range(26):
         for deuxieme_cle in range(26):
             for troisieme_cle in range(26):
-                texte_teste=enigma_dechiffrer(texte_chiffree,[premiere_cle,deuxieme_cle,troisieme_cle])
-                score,nombre_bigrammes_examines,proportion=scorer(texte_teste,liste_bigrammes,liste_bigrammes_rares) #permet d'appeler la fonction une seule fois
+                texte_teste = enigma_dechiffrer(texte_chiffree, [premiere_cle, deuxieme_cle, troisieme_cle])
+                score, nombre_bigrammes, proportion_bi = scorer(texte_teste, liste_bigrammes, liste_bigrammes_rares) # permet d'appeler la fonction une seule fois
 
+                if texte_court and dictionnaire:
+                    # pour les textes courts on utilise le scorer par mots en complément
+                    proportion_mots = scorer_mots(texte_teste, dictionnaire)
+                    # On fait une pondération de 70% mots et 30% bigrammes pour le calcul du score final (mots plus fiable sur texte court)
+                    score_final = 0.3 * proportion_bi + 0.7 * proportion_mots
 
-                if score>meilleur_score:
-                    meilleur_score=score #pour prendre en compte le meilleur score
-                    meilleur_cle=[premiere_cle,deuxieme_cle,troisieme_cle]
-                    meilleur_texte=texte_teste
+                    # Si tous les mots sont reconnus, c'est un bon candidat
+                    if proportion_mots >= 1.0:
+                        candidats.append((score_final, [premiere_cle, deuxieme_cle, troisieme_cle], texte_teste))
+                else:
+                    score_final = proportion_bi
 
-                if not texte_court and proportion>= seuil_ideal*0.85: #si ça rentre dedans, on arrête la boucle interminable
-                    #Pour que ça rentre dedans, le texte doit contenir au moins 10 bigrammes examinés
-                    #sinon le code fait toutes les possibilités et renvoie celle avec le meilleur score
-                    #le seuil qui se base sur un vrai texte francais est ideal, donc on prend 90% de ce seuil pour le vrai bon seuil
+                if score_final > meilleur_score:
+                    meilleur_score = score_final  # pour prendre en compte le meilleur score
+                    meilleur_cle = [premiere_cle, deuxieme_cle, troisieme_cle]
+                    meilleur_texte = texte_teste
+
+                if not texte_court and proportion_bi >= seuil_ideal * 0.85:
+                    # Le texte doit contenir au moins 30 bigrammes examinés pour être pris en compte
+                    # Sinon le code fait toutes les possibilités et renvoie celle avec le meilleur score
+                    # Le seuil qui se base sur un vrai texte français est une bonne référence, donc on prend 95% de ce seuil
                     return meilleur_texte, meilleur_cle
 
-    return meilleur_texte, meilleur_cle
+    # Pour texte court, on affiche tous les candidats triés par score
+    if texte_court and candidats:
+        candidats.sort(reverse=True)  # meilleur score en premier
+        return meilleur_texte, meilleur_cle, candidats
+
+    return meilleur_texte, meilleur_cle, []
 
 
 if __name__ == "__main__":
@@ -456,11 +498,29 @@ if __name__ == "__main__":
             texte_original = enigma_dechiffrer(resultat,cle)
             print(f"\ntexte décrypté:\n{texte_original}")
 
-        elif action == 3: #Brute force Enigma
+        elif action == 3:
             print("\nBrute force Enigma")
-            texte_dechiffree, cle = brute_force_enigma(resultat, liste_bigrammes, liste_bigrammes_rares)
-            score, nb, proportion = scorer(texte_dechiffree, liste_bigrammes, liste_bigrammes_rares)
-            print(f"\ntexte décrypté :\n{texte_dechiffree} ")
-            print(f"\nClé trouvée ≡ {cle} [26]")
-            print(f"Proportion de bigrammes reconnus : {proportion*100:.1f}%") #Un chiffre après la virgule
+            try:
+                dictionnaire = charger_dictionnaire()
+            except FileNotFoundError:
+                print("mots.txt introuvable — scoring par mots desactive")
+                dictionnaire = None
 
+            resultat_bf = brute_force_enigma(resultat, liste_bigrammes, liste_bigrammes_rares, dictionnaire)
+            texte_dechiffree, cle, candidats = resultat_bf
+
+            score, nb, proportion = scorer(texte_dechiffree, liste_bigrammes, liste_bigrammes_rares)
+            print(f"\nMeilleure cle trouvee : {cle} [26]")
+            print(f"Proportion de bigrammes reconnus : {proportion * 100:.1f}%")
+            print(f"\ntexte dechiffre :\n{texte_dechiffree}")
+
+            # Affichage des candidats pour texte court
+            if candidats:
+                print(f"\n{'=' * 60}")
+                print(f"Texte court — {len(candidats)} combinaison(s) coherente(s) trouvee(s) :")
+                print(f"{'=' * 60}")
+                for i, (score_f, cle_c, texte_c) in enumerate(candidats[:20]):  # max 20 affichés
+                    print(f"\n{i + 1}. Cle {cle_c} — score {score_f:.2f}")
+                    print(f"   Texte : {texte_c}")
+                if len(candidats) > 20:
+                    print(f"\n... et {len(candidats) - 20} autres combinaisons.")
