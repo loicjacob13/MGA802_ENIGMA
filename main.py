@@ -498,7 +498,7 @@ if __name__ == "__main__":
             texte_original = enigma_dechiffrer(resultat,cle)
             print(f"\ntexte décrypté:\n{texte_original}")
 
-        elif action == 3:
+        elif action == 3: #Brute force Enigma
             print("\nBrute force Enigma")
             try:
                 dictionnaire = charger_dictionnaire()
