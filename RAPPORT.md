@@ -73,9 +73,11 @@ Ensuite, pour chaque texte, notre fonction extrait tous les bigrammes du texte. 
 
 On a au final un ratio qui est calculé : `score / nombre_de_bigrammes_testés`.
 
-Le seuil d'arrêt précoce est pas arbitraire. Il est calculé dynamiquement à l'aide d'un vrai texte français, ici *Les Misérables*. Le seuil est fixé à 85% de cette proportion de référence. Ainsi, lorsqu'on parcours les 17 576 combinaisons, si une combinaison de clés atteint ce seuil, on retourne directement le résultat. En revanche, pour les textes très courts, il est possible que ce seuil ne soit jamais dépassé (quand il y a moins de 10 bigrammes par exemple). Dans ce cas, la combinaison avec le meilleur score absolue sera choisie.
+Le seuil d'arrêt précoce est pas arbitraire. Il est calculé dynamiquement à l'aide d'un vrai texte français, ici *Les Misérables*. Le seuil est fixé à 85% de cette proportion de référence. Ainsi, lorsqu'on parcours les 17 576 combinaisons, si une combinaison de clés atteint ce seuil, on retourne directement le résultat. 
 
-Attention, le brute-force comporte une limite pour les textes courts (<3 mots) qui est simplement mathématique, car il peut exister une multitude de cas où l'ensemble des bigrammes examinés par le code appartiennent tous à la liste des bigrammes les plus redondants de la langue française. Pour y remédier, on aurait pu charger un dictionnaire complet de la langue française mais cette option est très longue et pas viable en pratique. 
+Pour le petit textes, nous avions des soucis car plusieurs combinaisons de vrais bigrammes en même nombres étaient la meilleure solution. Dans ce cas là, le return était possiblement la meilleur phrase.
+On a utilisé une comparaison avec tous les mots du dictionnaire français pour trouver la bonne phrase.
+Cette méthode est beaucoup plus longue mais viable que si le nombre de mots est petit.
 
 ---
 
