@@ -98,5 +98,13 @@ Le projet a été hébergé sur un dépôt public généré à partir du templat
 
 ---
 
-## 6. Conclusion
+## 6. Distribution des tâches
+
+1. Loïc --> Principalement la construction du main
+2. Fabien --> Principalement la construction des tests 
+3. Guillaume --> Principalement la construction des fontions d'input et les fonctions de temps
+
+---
+
+## 7. Conclusion
 Ce mini-projet A a été une très bone opportunité de mise en pratique des concepts fondamentaux de la programmation structurée en Python dans un contexte collaboratif. L'implémentation de la variante Enigma César nous a confrontés aux réalités de la complexité algorithmique et nous a poussés à trouver des systèmes d'analyse plus ou moins poussés pour améliorer l'efficacité et l'automatisation. L'utilisation de `pytest` et de GitHub ont été très pédagogiques.
