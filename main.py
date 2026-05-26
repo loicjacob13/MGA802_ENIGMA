@@ -520,7 +520,7 @@ if __name__ == "__main__":
                 print(f"Texte court — {len(candidats)} combinaison(s) coherente(s) trouvee(s) :")
                 print(f"{'=' * 60}")
                 for i, (score_f, cle_c, texte_c) in enumerate(candidats[:20]):  # max 20 affichés
-                    print(f"\n{i + 1}. Cle {cle_c} — score {score_f:.2f}")
+                    print(f"\n{i + 1}. Cle {cle_c} — score : {score_f * 100:.1f}%")
                     print(f"   Texte : {texte_c}")
                 if len(candidats) > 20:
                     print(f"\n... et {len(candidats) - 20} autres combinaisons.")
