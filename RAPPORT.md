@@ -73,7 +73,14 @@ Ensuite, pour chaque texte, notre fonction extrait tous les bigrammes du texte. 
 
 On a au final un ratio qui est calculé : `score / nombre_de_bigrammes_testés`.
 
-Le seuil d'arrêt précoce est pas arbitraire. Il est calculé dynamiquement à l'aide d'un vrai texte français, ici *Les Misérables*. Le seuil est fixé à 85% de cette proportion de référence. Ainsi, lorsqu'on parcours les 17 576 combinaisons, si une combinaison de clés atteint ce seuil, on retourne directement le résultat. En revanche, pour les textes très courts, il est possible que ce seuil ne soit jamais dépassé (quand il y a moins de 10 bigrammes par exemple). Dans ce cas, la combinaison avec le meilleur score absolue sera choisie.
+Le seuil d'arrêt précoce est pas arbitraire. Il est calculé dynamiquement à l'aide d'un vrai texte français, ici *Les Misérables*. Le seuil est fixé à 85% de cette proportion de référence. Ainsi, lorsqu'on parcours les 17 576 combinaisons, si une combinaison de clés atteint ce seuil, on retourne directement le résultat. 
+
+Pour le petit textes, nous avions des soucis car plusieurs combinaisons de vrais bigrammes en même nombres étaient la meilleure solution. Dans ce cas là, le return était possiblement la meilleur phrase.
+On a utilisé une comparaison avec tous les mots du dictionnaire français pour trouver la bonne phrase.
+Cette méthode est beaucoup plus longue mais viable que si le nombre de mots est petit.
+Si plusieurs mots peuvent correspondre, le programme va renvoyer les différentes options de mots possibles.
+Pour le calcul du score final, les mots du dictionnaire comptent pour 70% alors que les bigrammes comptent pour 30%.
+Dans le cas de phrases avec très peu de mots, les mots sont plus influents que les bigrammes, d'où cette proportion modifiée.
 
 ---
 
@@ -82,9 +89,6 @@ Le seuil d'arrêt précoce est pas arbitraire. Il est calculé dynamiquement à 
 Afin d'analyset l'efficacité de nos algorithmes, des mesures empiriques rigoureuses ont été effectuées à l'aide des fonctions `time.perf_counter` et du module `timeit`.
 
 On remarque que le brute-force César est presque instantané, alors que le Enigma César est plus long (ce qui est normal).
-
-### 4.1 Analyse de la Complexité et Optimisation
-L'attaque sur le chiffrement de César est instantanée en raison de son coût algorithmique en temps constant $O(1)$ par rapport à l'espace des clés. 
 
 ---
 
@@ -98,5 +102,13 @@ Le projet a été hébergé sur un dépôt public généré à partir du templat
 
 ---
 
-## 6. Conclusion
+## 6. Distribution des tâches
+
+1. Loïc --> Principalement la construction du main
+2. Fabien --> Principalement la construction des tests 
+3. Guillaume --> Principalement la construction des fontions d'input et les fonctions de temps
+
+---
+
+## 7. Conclusion
 Ce mini-projet A a été une très bone opportunité de mise en pratique des concepts fondamentaux de la programmation structurée en Python dans un contexte collaboratif. L'implémentation de la variante Enigma César nous a confrontés aux réalités de la complexité algorithmique et nous a poussés à trouver des systèmes d'analyse plus ou moins poussés pour améliorer l'efficacité et l'automatisation. L'utilisation de `pytest` et de GitHub ont été très pédagogiques.
